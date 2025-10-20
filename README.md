@@ -6,7 +6,7 @@
 
 ## Screenshot
 
-![Example of MMM-Template](./example_1.png)
+![Example of MMM-PID](./pid_module_screenshot.png)
 
 ## Installation
 
@@ -35,7 +35,7 @@ npm ci --omit=dev
 
 To use this module, you have to add a configuration object to the modules array in the `config/config.js` file.
 
-In order to display departure boards for specific stops, you need to find their ID [here](https://pid.cz/en/opendata/)  in the section (PID stop list) in the XML or JSON file.
+In order to display departure boards for specific stops, you need to find their ID [here](https://pid.cz/en/opendata/)  in the section (PID stop list) in the XML or JSON file. To ensure you have correct direction and platform, you can use this [map](https://pid.cz/zastavky-pid/).
 
 ### Example configuration
 
@@ -106,7 +106,7 @@ Configuration with all options:
 ### Configuration options
 
 Option|Description
-------|------|------|-----------
+------|-----------
 `exampleContent`|The content to show on the page
 
 
