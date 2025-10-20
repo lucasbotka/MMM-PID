@@ -46,10 +46,10 @@ Module.register("MMM-PID", {
     if (notification === "DEPARTURES_DATA") {
       this.error = null;
       this.departures[payload.aswIds] = payload.data;
-      this.updateDom(300);
+      this.updateDom();
     } else if (notification === "FETCH_ERROR") {
       this.error = `API Error: ${payload.error}`;
-      this.updateDom(300);
+      this.updateDom();
     }
   },
 
@@ -70,6 +70,21 @@ Module.register("MMM-PID", {
     }
 
     let departuresRendered = false;
+
+    const getIconForRouteType = (routeType) => {
+        switch (routeType) {
+            case 0:
+                return "fas fa-train-tram"; // Tram
+            case 1:
+                return "fas fa-train-subway"; // Metro
+            case 2:
+                return "fas fa-train"; // Train
+            case 3:
+                return "fas fa-bus-simple"; // Bus
+            default:
+                return "fas fa-question-circle"; // Unknown
+        }
+    };
 
     this.config.stops.forEach(stop => {
       const stopData = this.departures[stop.aswIds];
@@ -100,9 +115,11 @@ Module.register("MMM-PID", {
             const minutes = departure.departure_timestamp.minutes;
             const departureTime = new Date(departure.departure_timestamp.estimated || departure.departure_timestamp.scheduled).toLocaleTimeString("cs-CZ", { hour: '2-digit', minute: '2-digit' });
             const delay = departure.delay.seconds > 0 ? `<span class="pid-delay">+${Math.round(departure.delay.seconds / 60)}&nbsp;min</span>` : "";
+            
+            const iconClass = getIconForRouteType(departure.route.type);
 
             // Add the Font Awesome icon here
-            listItem.innerHTML = `<i class="fas fa-bus-simple"></i> <span class="pid-line-name">Line ${departure.route.short_name}</span> in <span class="pid-minutes">${minutes}</span> min (at ${departureTime}) ${delay}`;
+            listItem.innerHTML = `<i class="${iconClass}"></i> <span class="pid-line-name">Line ${departure.route.short_name}</span> in <span class="pid-minutes">${minutes}</span> min (at ${departureTime}) ${delay}`;
             departuresList.appendChild(listItem);
           });
           stopWrapper.appendChild(departuresList);

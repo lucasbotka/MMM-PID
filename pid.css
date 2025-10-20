@@ -1,16 +1,16 @@
 .pid-departures-list {
-    list-style-type: none; /* Removes the default bullet points */
-    padding-left: 0;      /* Removes the default padding */
+    list-style-type: none;
+    padding-left: 0;
     margin-bottom: 20px;
 }
 
 .pid-stop-name {
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 }
 
 .pid-departures-list li {
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 }
 
 /* Style for the new Font Awesome icon */

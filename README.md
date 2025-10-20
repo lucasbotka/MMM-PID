@@ -1,6 +1,6 @@
 # MMM-PID
 
-*MMM-PID* is a module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) that displays departure boards from stops integrated into the system [PID](https://pid.cz/) (Pražská integrovaná doprava) Prague public trasport. Using Golemio free API.
+*MMM-PID* is a module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) that displays public transport departure boards from stops integrated into the [PID](https://pid.cz/) system - Prague integrated transport (CS Pražská integrovaná doprava) . Using Golemio free API.
 
 
 
@@ -16,12 +16,12 @@ Just go to the modules directory and clone the repository and install the depend
 cd ~/MagicMirror/modules
 git clone https://github.com/lucasbotka/MMM-PID.git
 cd ~/MagicMirror/modules/MMM-PID
-npm install
+npm ci --omit=dev
 ```
 
 ### Update
 
-Just go to the MM-PID directory and pull the update and install the dependencies:
+Just go to the MMM-PID directory and pull the update and install the dependencies:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-PID
@@ -31,7 +31,7 @@ npm ci --omit=dev
 
 ## Configuration
 
-*MMM-PID* using Golemio [API](https://api.golemio.cz/docs/openapi/). You can request your key for free [here](https://api.golemio.cz/api-keys/auth/sign-in).
+*MMM-PID* using Golemio [API](https://api.golemio.cz/docs/openapi/). You can obtain your key for free [here](https://api.golemio.cz/api-keys/auth/sign-in).
 
 To use this module, you have to add a configuration object to the modules array in the `config/config.js` file.
 
@@ -42,31 +42,65 @@ In order to display departure boards for specific stops, you need to find their 
 Minimal configuration to use the module:
 
 ```js
-Module.register("MMM-PID", {
-  defaults: {
-    apiKey: "YOUR_GOLEMIO_API_KEY",
-    stops: [
-      {
-        aswIds: '1973_2',
-        allowed_routes: [], //filter routes which you want to show 
-        maxDepartures: 5 //number of departures to show
-      }
-    ],
-    minutesAfter: 160, // how many minutes in advance will departures be displayed
-    updateInterval: 60000 // 1 minute
-  },
+{
+			module: 'MMM-PID',
+			position: 'top_right',
+			header: "Departure board",
+			config: {
+				apiKey: "YOUR_GOLEMIO_API_KEY", 
+				stops: [
+					{
+						aswIds: '897/101',
+						allowed_routes: [ ], 
+						maxDepartures: 3
+					},
+					{
+						aswIds: '1827_2',
+						allowed_routes: [ ],
+						maxDepartures: 3
+					},
+					{
+						aswIds: '474/3',
+						allowed_routes: [ ],
+						maxDepartures: 3
+					}
+				],
+				minutesAfter: 160,
+				updateInterval: 60000
+			}
+		},
 ```
 
 Configuration with all options:
 
 ```js
-    {
-        module: 'MMM-Template',
-        position: 'lower_third',
-        config: {
-            exampleContent: 'Welcome world'
-        }
-    },
+{
+			module: 'MMM-PID',
+			position: 'top_right',
+			header: "Departure board",
+			config: {
+				apiKey: "YOUR_GOLEMIO_API_KEY", 
+				stops: [
+					{
+						aswIds: '897/101',
+						allowed_routes: [ ], 
+						maxDepartures: 3
+					},
+					{
+						aswIds: '1827_2',
+						allowed_routes: [ ],
+						maxDepartures: 3
+					},
+					{
+						aswIds: '474/3',
+						allowed_routes: [ ],
+						maxDepartures: 3
+					}
+				],
+				minutesAfter: 160,
+				updateInterval: 60000
+			}
+		},
 ```
 
 ### Configuration options
