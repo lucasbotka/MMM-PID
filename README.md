@@ -107,7 +107,17 @@ Configuration with all options:
 
 Option|Description
 ------|-----------
-`exampleContent`|The content to show on the page
+`apiKey`| Your golemio api [key](https://api.golemio.cz/api-keys/auth/sign-in)
+`aswIds`| Stop ID
+`allowed_routes`| Filter the lines to be displayed  Eg. [ '375' , '367' ]
+`maxDepartures`| Limit the number of results displayed
+`minutesAfter`| How many minutes in advance should departures be displayed
+`minutesAfter`| How many minutes in advance should departures be displayed
+`updateInterval`| How often should the output be updated in ms
+
+
+
+
 
 
 ## Developer commands
