@@ -1,0 +1,39 @@
+{
+  "name": "mmm-pid",
+  "version": "1.0.0",
+  "description": "Magic Mirror module to display Prague public transport (PID) departures.",
+  "main": "MMM-PID.js",
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "test": "node --run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucasbotka/MMM-PID.git"
+  },
+  "keywords": [
+    "magic mirror",
+    "pid",
+    "prague",
+    "public transport",
+    "departure boards"
+  ],
+  "author": "Lukas Botka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lucasbotka/MMM-PID/issues"
+  },
+  "homepage": "https://github.com/lucasbotka/MMM-PID/#readme",
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@eslint/css": "^0.9.0",
+    "@eslint/js": "^9.30.1",
+    "@eslint/markdown": "^6.6.0",
+    "@stylistic/eslint-plugin": "^5.1.0",
+    "eslint": "^9.30.1",
+    "globals": "^16.3.0"
+  }
+}

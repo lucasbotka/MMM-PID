@@ -1,0 +1,34 @@
+.pid-departures-list {
+    list-style-type: none; /* Removes the default bullet points */
+    padding-left: 0;      /* Removes the default padding */
+    margin-bottom: 20px;
+}
+
+.pid-stop-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.pid-departures-list li {
+    margin-bottom: 5px;
+}
+
+/* Style for the new Font Awesome icon */
+.pid-departures-list li .fas.fa-bus-simple {
+    margin-right: 8px; /* Adds some space between the icon and the text */
+    color: #ccc;        /* Optional: give the icon a light gray color */
+}
+
+.pid-line-name {
+    /* Style for the line name if needed */
+}
+
+.pid-minutes {
+    font-weight: bold;
+    color: #fff; /* Make the minutes stand out */
+}
+
+.pid-delay {
+    color: #ff8a80; /* Reddish color for delays */
+    font-size: 0.9em;
+}
