@@ -1,7 +1,7 @@
 {
   "name": "mmm-pid",
   "version": "1.0.0",
-  "description": "Magic Mirror module to display Prague public transport (PID) departures.",
+  "description": "MagicMirror² module to display real-time departures for public transport in Prague region - Czech Republic. Fetching data from PID.",
   "main": "MMM-PID.js",
   "scripts": {
     "lint": "eslint",
@@ -13,10 +13,11 @@
     "url": "https://github.com/lucasbotka/MMM-PID.git"
   },
   "keywords": [
-    "magic mirror",
-    "pid",
-    "prague",
     "public transport",
+    "prague",
+    "czech republic",
+    "PID",
+    "magicmirror",
     "departure boards"
   ],
   "author": "Lukas Botka",

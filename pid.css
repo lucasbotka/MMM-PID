@@ -14,7 +14,7 @@
 }
 
 /* Style for the new Font Awesome icon */
-.pid-departures-list li .fas.fa-bus-simple {
+.pid-departures-list li .fas {
     margin-right: 8px; /* Adds some space between the icon and the text */
     color: #ccc;        /* Optional: give the icon a light gray color */
 }

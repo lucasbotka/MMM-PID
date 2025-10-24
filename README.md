@@ -1,7 +1,6 @@
 # MMM-PID
 
-*MMM-PID* is a module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) that displays public transport departure boards from stops integrated into the [PID](https://pid.cz/) system - Prague integrated transport (CS Pražská integrovaná doprava) . Using Golemio free API.
-
+*MMM-PID* is a module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) that displays real-time departure boards for public transport stops within the [PID](https://pid.cz/) system. Using the free Golemio API, it shows departure times, including any current delays, for Prague and the surrounding region in the Czech Republic.
 
 
 ## Screenshot
@@ -39,7 +38,6 @@ In order to display departure boards for specific stops, you need to find their 
 
 ### Example configuration
 
-Minimal configuration to use the module:
 
 ```js
 {
@@ -50,59 +48,26 @@ Minimal configuration to use the module:
 				apiKey: "YOUR_GOLEMIO_API_KEY", 
 				stops: [
 					{
-						aswIds: '897/101',
+						aswIds: '897/101', //Černý most - Metro
 						allowed_routes: [ ], 
 						maxDepartures: 3
 					},
 					{
-						aswIds: '1827_2',
-						allowed_routes: [ ],
+						aswIds: '1827_2', // Brandýs nad Labem náměstí
+						allowed_routes: [ '367' , '375' ],
 						maxDepartures: 3
 					},
 					{
-						aswIds: '474/3',
+						aswIds: '474/3', // Nádraží Vysočany
 						allowed_routes: [ ],
 						maxDepartures: 3
 					}
 				],
 				minutesAfter: 160,
-				updateInterval: 60000
+				updateInterval: 60000 // 1 min
 			}
 		},
 ```
-
-Configuration with all options:
-
-```js
-{
-			module: 'MMM-PID',
-			position: 'top_right',
-			header: "Departure board",
-			config: {
-				apiKey: "YOUR_GOLEMIO_API_KEY", 
-				stops: [
-					{
-						aswIds: '897/101',
-						allowed_routes: [ ], 
-						maxDepartures: 3
-					},
-					{
-						aswIds: '1827_2',
-						allowed_routes: [ ],
-						maxDepartures: 3
-					},
-					{
-						aswIds: '474/3',
-						allowed_routes: [ ],
-						maxDepartures: 3
-					}
-				],
-				minutesAfter: 160,
-				updateInterval: 60000
-			}
-		},
-```
-
 ### Configuration options
 
 Option|Description
