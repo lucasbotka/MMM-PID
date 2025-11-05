@@ -64,7 +64,8 @@ In order to display departure boards for specific stops, you need to find their 
 					}
 				],
 				minutesAfter: 160,
-				updateInterval: 60000 // 1 min
+				updateInterval: 60000, // 1 min
+				showIcons: true
 			}
 		},
 ```
@@ -78,6 +79,7 @@ Option|Description
 `maxDepartures`| Limit the number of results displayed
 `minutesAfter`| How many minutes in advance should departures be displayed
 `updateInterval`| How often should the output be updated in ms
+`showIcons`| Show icons for the lines
 
 
 

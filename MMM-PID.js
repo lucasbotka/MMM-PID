@@ -16,7 +16,8 @@ Module.register("MMM-PID", {
       }
     ],
     minutesAfter: 160,
-    updateInterval: 60000 // 1 minute
+    updateInterval: 60000, // 1 minute
+    showIcons: true
   },
 
   start: function() {
@@ -117,8 +118,9 @@ Module.register("MMM-PID", {
             const delay = departure.delay.seconds > 0 ? `<span class="pid-delay">+${Math.round(departure.delay.seconds / 60)}&nbsp;min</span>` : "";
             
             const iconClass = getIconForRouteType(departure.route.type);
+            const iconHTML = this.config.showIcons ? `<i class="${iconClass}"></i> ` : "";
 
-            listItem.innerHTML = `<i class="${iconClass}"></i> <span class="pid-line-name">Line ${departure.route.short_name}</span> in <span class="pid-minutes">${minutes}</span> min (at ${departureTime}) ${delay}`;
+            listItem.innerHTML = `${iconHTML}<span class="pid-line-name">Line ${departure.route.short_name}</span> in <span class="pid-minutes">${minutes}</span> min (at ${departureTime}) ${delay}`;
             departuresList.appendChild(listItem);
           });
           stopWrapper.appendChild(departuresList);
