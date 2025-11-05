@@ -17,3 +17,6 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: "development"
+    ignore:
+      - dependency-name: "node-fetch"
+        update-types: ["version-update:semver-major"]
