@@ -108,22 +108,53 @@ Module.register("MMM-PID", {
           stopName.innerHTML = (stopData.stops && stopData.stops.length > 0) ? stopData.stops[0].stop_name : stop.aswIds;
           stopWrapper.appendChild(stopName);
 
-          const departuresList = document.createElement("ul");
-          departuresList.className = "pid-departures-list";
+          const departuresTable = document.createElement("table");
+          departuresTable.className = "pid-departures-table";
 
           filteredDepartures.forEach(departure => {
-            const listItem = document.createElement("li");
-            const minutes = departure.departure_timestamp.minutes;
-            const departureTime = new Date(departure.departure_timestamp.estimated || departure.departure_timestamp.scheduled).toLocaleTimeString("cs-CZ", { hour: '2-digit', minute: '2-digit' });
-            const delay = departure.delay.seconds > 0 ? `<span class="pid-delay">+${Math.round(departure.delay.seconds / 60)}&nbsp;min</span>` : "";
-            
-            const iconClass = getIconForRouteType(departure.route.type);
-            const iconHTML = this.config.showIcons ? `<i class="${iconClass}"></i> ` : "";
+            const row = document.createElement("tr");
 
-            listItem.innerHTML = `${iconHTML}<span class="pid-line-name">Line ${departure.route.short_name}</span> in <span class="pid-minutes">${minutes}</span> min (at ${departureTime}) ${delay}`;
-            departuresList.appendChild(listItem);
+            // Icon
+            const iconCell = document.createElement("td");
+            iconCell.className = "pid-icon";
+            if (this.config.showIcons) {
+              const icon = document.createElement("i");
+              icon.className = getIconForRouteType(departure.route.type);
+              iconCell.appendChild(icon);
+            }
+            row.appendChild(iconCell);
+
+            // Line Name
+            const lineCell = document.createElement("td");
+            lineCell.className = "pid-line-name";
+            lineCell.innerHTML = departure.route.short_name;
+            row.appendChild(lineCell);
+
+            // Minutes until departure
+            const minutesCell = document.createElement("td");
+            minutesCell.className = "pid-minutes";
+            minutesCell.innerHTML = `<span class="departs-in-text">departs in </span>${departure.departure_timestamp.minutes}&nbsp;min`;
+            row.appendChild(minutesCell);
+
+            // Departure Time
+            const timeCell = document.createElement("td");
+            timeCell.className = "pid-departure-time";
+            const departureTime = new Date(departure.departure_timestamp.estimated || departure.departure_timestamp.scheduled).toLocaleTimeString("cs-CZ", { hour: '2-digit', minute: '2-digit' });
+            timeCell.innerHTML = departureTime;
+            row.appendChild(timeCell);
+
+            // Delay
+            const delayCell = document.createElement("td");
+            delayCell.className = "pid-delay";
+            const delayInMinutes = Math.round(departure.delay.seconds / 60);
+            if (delayInMinutes > 0) {
+              delayCell.innerHTML = `+${delayInMinutes}`;
+            }
+            row.appendChild(delayCell);
+
+            departuresTable.appendChild(row);
           });
-          stopWrapper.appendChild(departuresList);
+          stopWrapper.appendChild(departuresTable);
           wrapper.appendChild(stopWrapper);
         }
       }

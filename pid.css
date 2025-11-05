@@ -1,34 +1,62 @@
-.pid-departures-list {
-    list-style-type: none;
-    padding-left: 0;
-    margin-bottom: 20px;
+.pid-departures {
+    width: -moz-fit-content;
+    width: fit-content;
 }
 
 .pid-stop-name {
     font-weight: bold;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
 }
 
-.pid-departures-list li {
-    margin-bottom: 3px;
+.pid-stop {
+    margin-bottom: 20px;
 }
 
-/* Style for the new Font Awesome icon */
-.pid-departures-list li .fas {
-    margin-right: 8px; /* Adds some space between the icon and the text */
-    color: #ccc;        /* Color of icon*/
+.pid-departures-table {
+    border-collapse: collapse;
+}
+
+.pid-departures-table td {
+    padding: 2px 5px;
+    text-align: left;
+}
+
+.pid-departures-table .pid-icon {
+    width: 30px; /* Fixed width for the icon column */
+    text-align: center;
+}
+
+.pid-departures-table .pid-icon .fas {
+    color: #ccc;
 }
 
 .pid-line-name {
-    /* Style for the line name if needed */
+    font-weight: bold;
+    width: 40px;
 }
 
 .pid-minutes {
     font-weight: bold;
-    color: #fff; /* Make the minutes stand out */
+    color: #fff;
+    text-align: right;
+    width: 150px;
+}
+
+.pid-minutes .departs-in-text {
+    font-weight: normal;
+    color: #ccc;
+    margin-right: 10px;
+}
+
+.pid-departure-time {
+    text-align: left;
+    font-size: 0.9em;
+    color: #ccc;
 }
 
 .pid-delay {
     color: #ff8a80; /* Red color for delays */
     font-size: 0.9em;
+    text-align: left;
+    padding-left: 10px;
 }
