@@ -13,7 +13,7 @@ module.exports = NodeHelper.create({
   },
 
   getData: async function(config) {
-    // This now correctly uses the API key passed from MMM-PID.js
+
     const API_KEY = config.apiKey;
     
     const query_params = {

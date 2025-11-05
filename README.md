@@ -77,7 +77,6 @@ Option|Description
 `allowed_routes`| Filter the lines to be displayed  Eg. [ '375' , '367' ]
 `maxDepartures`| Limit the number of results displayed
 `minutesAfter`| How many minutes in advance should departures be displayed
-`minutesAfter`| How many minutes in advance should departures be displayed
 `updateInterval`| How often should the output be updated in ms
 
 

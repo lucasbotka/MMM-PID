@@ -29,7 +29,7 @@ Module.register("MMM-PID", {
   },
 
   getStyles: function() {
-    return ["pid.css", "font-awesome.css"]; // Add font-awesome
+    return ["pid.css", "font-awesome.css"];
   },
 
   getDepartures: function() {
@@ -82,7 +82,7 @@ Module.register("MMM-PID", {
             case 3:
                 return "fas fa-bus-simple"; // Bus
             default:
-                return "fas fa-question-circle"; // Unknown
+                return "fas fa-bus"; // Unknown
         }
     };
 
@@ -118,7 +118,6 @@ Module.register("MMM-PID", {
             
             const iconClass = getIconForRouteType(departure.route.type);
 
-            // Add the Font Awesome icon here
             listItem.innerHTML = `<i class="${iconClass}"></i> <span class="pid-line-name">Line ${departure.route.short_name}</span> in <span class="pid-minutes">${minutes}</span> min (at ${departureTime}) ${delay}`;
             departuresList.appendChild(listItem);
           });
