@@ -1,0 +1,7 @@
+{
+  "LOADING": "Loading departures...",
+  "API_ERROR": "API Error: ",
+  "DEPARTS_IN": "departs in",
+  "MINUTES": "min",
+  "NO_DEPARTURES": "No departures matching your criteria."
+}

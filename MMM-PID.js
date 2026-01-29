@@ -33,6 +33,13 @@ Module.register("MMM-PID", {
     return ["pid.css", "font-awesome.css"];
   },
 
+  getTranslations: function() {
+    return {
+        cs: "translations/cs.json",
+        en: "translations/en.json"
+    };
+  },
+
   getDepartures: function() {
     this.config.stops.forEach(stop => {
       this.sendSocketNotification("GET_DEPARTURES", {
@@ -49,7 +56,7 @@ Module.register("MMM-PID", {
       this.departures[payload.aswIds] = payload.data;
       this.updateDom();
     } else if (notification === "FETCH_ERROR") {
-      this.error = `API Error: ${payload.error}`;
+      this.error = this.translate("API_ERROR") + payload.error;
       this.updateDom();
     }
   },
@@ -65,7 +72,7 @@ Module.register("MMM-PID", {
     }
 
     if (Object.keys(this.departures).length === 0) {
-      wrapper.innerHTML = "Loading departures...";
+      wrapper.innerHTML = this.translate("LOADING");
       wrapper.className = "dimmed light small";
       return wrapper;
     }
@@ -133,7 +140,7 @@ Module.register("MMM-PID", {
             // Minutes until departure
             const minutesCell = document.createElement("td");
             minutesCell.className = "pid-minutes";
-            minutesCell.innerHTML = `<span class="departs-in-text">departs in </span>${departure.departure_timestamp.minutes}&nbsp;min`;
+            minutesCell.innerHTML = `<span class="departs-in-text">${this.translate("DEPARTS_IN")} </span>${departure.departure_timestamp.minutes}&nbsp;${this.translate("MINUTES")}`;
             row.appendChild(minutesCell);
 
             // Departure Time
@@ -161,7 +168,7 @@ Module.register("MMM-PID", {
     });
 
     if (!departuresRendered) {
-      wrapper.innerHTML = "No departures matching your criteria.";
+      wrapper.innerHTML = this.translate("NO_DEPARTURES");
       wrapper.className = "dimmed light small";
     }
 
