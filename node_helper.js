@@ -1,18 +1,18 @@
 const NodeHelper = require("node_helper");
-const fetch = require("node-fetch");
 
 module.exports = NodeHelper.create({
   start: function() {
     console.log("Starting node helper for: " + this.name);
   },
 
-  socketNotificationReceived: function(notification, payload) {
+  socketNotificationReceived: async function(notification, payload) {
     if (notification === "GET_DEPARTURES") {
-      this.getData(payload);
+      const fetch = (await import('node-fetch')).default;
+      this.getData(payload, fetch);
     }
   },
 
-  getData: async function(config) {
+  getData: async function(config, fetch) {
 
     const API_KEY = config.apiKey;
     
