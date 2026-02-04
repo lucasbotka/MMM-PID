@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/lucasbotka/MMM-PID/#readme",
   "dependencies": {
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@eslint/css": "^0.14.1",
