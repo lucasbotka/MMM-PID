@@ -9,7 +9,7 @@
 
 ## Installation
 
-Just go to the modules directory and clone the repository and install the dependencies:
+Go to the modules directory, clone the repository and install the dependencies:
 
 ```bash
 cd ~/MagicMirror/modules
@@ -20,7 +20,7 @@ npm ci --omit=dev
 
 ### Update
 
-Just go to the MMM-PID directory and pull the update and install the dependencies:
+Go to the MMM-PID directory, pull the update and install the dependencies:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-PID
