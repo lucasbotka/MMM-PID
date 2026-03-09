@@ -15,7 +15,7 @@ Go to the modules directory, clone the repository and install the dependencies:
 cd ~/MagicMirror/modules
 git clone https://github.com/lucasbotka/MMM-PID.git
 cd ~/MagicMirror/modules/MMM-PID
-npm ci --omit=dev
+npm install
 ```
 
 ### Update
@@ -25,7 +25,7 @@ Go to the MMM-PID directory, pull the update and install the dependencies:
 ```bash
 cd ~/MagicMirror/modules/MMM-PID
 git pull
-npm ci --omit=dev
+npm install
 ```
 
 ## Configuration
