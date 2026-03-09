@@ -5,14 +5,13 @@ module.exports = NodeHelper.create({
     console.log("Starting node helper for: " + this.name)
   },
 
-  socketNotificationReceived: async function (notification, payload) {
+  socketNotificationReceived: function (notification, payload) {
     if (notification === "GET_DEPARTURES") {
-      const fetch = (await import("node-fetch")).default
-      this.getData(payload, fetch)
+      this.getData(payload)
     }
   },
 
-  getData: async function (config, fetch) {
+  getData: async function (config) {
     const API_KEY = config.apiKey
 
     const query_params = {
