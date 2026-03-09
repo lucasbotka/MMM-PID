@@ -6,6 +6,9 @@ import markdown from "@eslint/markdown"
 import stylistic from "@stylistic/eslint-plugin"
 
 export default defineConfig([
+  {
+    ignores: ["README.md"],
+  },
   { files: ["**/*.css"], plugins: { css }, language: "css/css", extends: ["css/recommended"] },
   {
     files: ["**/*.js", "**/*.mjs"],
