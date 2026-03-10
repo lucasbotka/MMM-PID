@@ -1,6 +1,7 @@
 {
   "name": "mmm-pid",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "MagicMirror² module to display real-time departures for public transport in Prague region - Czech Republic. Fetching data from PID.",
   "main": "MMM-PID.js",
   "scripts": {
