@@ -61,6 +61,21 @@ Module.register("MMM-PID", {
     }
   },
 
+  getIconForRouteType: function (routeType) {
+    switch (routeType) {
+      case 0:
+        return "fas fa-train-tram" // Tram
+      case 1:
+        return "fas fa-train-subway" // Metro
+      case 2:
+        return "fas fa-train" // Train
+      case 3:
+        return "fas fa-bus-simple" // Bus
+      default:
+        return "fas fa-bus" // Unknown
+    }
+  },
+
   getDom: function () {
     const wrapper = document.createElement("div")
     wrapper.className = "pid-departures"
@@ -72,21 +87,6 @@ Module.register("MMM-PID", {
     }
 
     let somethingRendered = false
-
-    const getIconForRouteType = (routeType) => {
-      switch (routeType) {
-        case 0:
-          return "fas fa-train-tram" // Tram
-        case 1:
-          return "fas fa-train-subway" // Metro
-        case 2:
-          return "fas fa-train" // Train
-        case 3:
-          return "fas fa-bus-simple" // Bus
-        default:
-          return "fas fa-bus" // Unknown
-      }
-    }
 
     this.config.stops.forEach((stop) => {
       if (this.errors[stop.aswIds]) {
@@ -128,7 +128,7 @@ Module.register("MMM-PID", {
             iconCell.className = "pid-icon"
             if (this.config.showIcons) {
               const icon = document.createElement("i")
-              icon.className = getIconForRouteType(departure.route.type)
+              icon.className = this.getIconForRouteType(departure.route.type)
               iconCell.appendChild(icon)
             }
             row.appendChild(iconCell)

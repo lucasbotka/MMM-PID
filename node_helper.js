@@ -14,19 +14,17 @@ module.exports = NodeHelper.create({
   getData: async function (config) {
     const API_KEY = config.apiKey
 
-    const query_params = {
+    const url = new URL("https://api.golemio.cz/v2/pid/departureboards/")
+    url.search = new URLSearchParams({
       aswIds: config.aswIds,
       filter: "none",
       limit: 20,
       skip: "atStop",
       minutesAfter: config.minutesAfter || 160,
-    }
-
-    const url = new URL("https://api.golemio.cz/v2/pid/departureboards/")
-    Object.keys(query_params).forEach(key => url.searchParams.append(key, query_params[key]))
+    }).toString()
 
     try {
-      const response = await fetch(url.toString(), {
+      const response = await fetch(url, {
         headers: {
           "x-access-token": API_KEY,
         },
