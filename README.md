@@ -9,32 +9,29 @@
 
 ## Installation
 
-Go to the modules directory, clone the repository and install the dependencies:
+Go to the modules directory and clone the repository:
 
 ```bash
 cd ~/MagicMirror/modules
 git clone https://github.com/lucasbotka/MMM-PID.git
-cd ~/MagicMirror/modules/MMM-PID
-npm install
 ```
 
 ### Update
 
-Go to the MMM-PID directory, pull the update and install the dependencies:
+Go to the MMM-PID directory and pull the update:
 
 ```bash
 cd ~/MagicMirror/modules/MMM-PID
 git pull
-npm install
 ```
 
 ## Configuration
 
-*MMM-PID* using Golemio [API](https://api.golemio.cz/docs/openapi/). You can obtain your key for free [here](https://api.golemio.cz/api-keys/auth/sign-in).
+*MMM-PID* uses the Golemio [API](https://api.golemio.cz/docs/openapi/). You can obtain your key for free [here](https://api.golemio.cz/api-keys/auth/sign-in).
 
 To use this module, you have to add a configuration object to the modules array in the `config/config.js` file.
 
-In order to display departure boards for specific stops, you need to find their ID [here](https://pid.cz/en/opendata/)  in the section (PID stop list) in the XML or JSON file. To ensure you have correct direction and platform, you can use this [map](https://pid.cz/zastavky-pid/).
+In order to display departure boards for specific stops, you need to find their ID [here](https://pid.cz/en/opendata/) in the PID stop list (XML or JSON file). To ensure you have the correct direction and platform, you can use this [map](https://pid.cz/zastavky-pid/).
 
 ### Example configuration
 
@@ -73,13 +70,19 @@ In order to display departure boards for specific stops, you need to find their 
 
 Option|Description
 ------|-----------
-`apiKey`| Your golemio api [key](https://api.golemio.cz/api-keys/auth/sign-in)
-`aswIds`| Stop ID
-`allowed_routes`| Filter the lines to be displayed  Eg. [ '375' , '367' ]
-`maxDepartures`| Limit the number of results displayed
-`minutesAfter`| How many minutes in advance should departures be displayed
-`updateInterval`| How often should the output be updated in ms
-`showIcons`| Show icons for the lines
+`apiKey`| Your Golemio API [key](https://api.golemio.cz/api-keys/auth/sign-in)
+`stops`| Array of stop objects (see below)
+`minutesAfter`| How many minutes ahead departures should be fetched (default: `160`)
+`updateInterval`| How often to refresh departures in milliseconds (default: `60000`)
+`showIcons`| Show transport type icons (default: `true`)
+
+Each object in the `stops` array supports the following options:
+
+Option|Description
+------|-----------
+`aswIds`| Stop ID from the PID stop list
+`allowed_routes`| Only show these line numbers. Empty array means all lines. Eg. `[ '375', '367' ]`
+`maxDepartures`| Maximum number of departures to display for this stop (default: `5`)
 
 
 
@@ -91,8 +94,7 @@ Option|Description
 - `npm install` - Install all dependencies.
 - `node --run lint` - Run linting and formatter checks.
 - `node --run lint:fix` - Fix linting and formatter issues.
-- `node --run test` - Run linting and formatter checks + Run spelling check.
-- `node --run test:spelling` - Run spelling check.
+- `node --run test` - Run linting and formatter checks.
 
 
 ## Contributing

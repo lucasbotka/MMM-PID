@@ -22,7 +22,7 @@ Module.register("MMM-PID", {
 
   start: function () {
     this.departures = {}
-    this.error = null
+    this.errors = {}
     this.getDepartures()
     setInterval(() => {
       this.getDepartures()
@@ -52,11 +52,11 @@ Module.register("MMM-PID", {
 
   socketNotificationReceived: function (notification, payload) {
     if (notification === "DEPARTURES_DATA") {
-      this.error = null
+      delete this.errors[payload.aswIds]
       this.departures[payload.aswIds] = payload.data
       this.updateDom()
     } else if (notification === "FETCH_ERROR") {
-      this.error = this.translate("API_ERROR") + payload.error
+      this.errors[payload.aswIds] = this.translate("API_ERROR") + payload.error
       this.updateDom()
     }
   },
@@ -65,19 +65,13 @@ Module.register("MMM-PID", {
     const wrapper = document.createElement("div")
     wrapper.className = "pid-departures"
 
-    if (this.error) {
-      wrapper.textContent = this.error
-      wrapper.className = "dimmed light small"
-      return wrapper
-    }
-
-    if (Object.keys(this.departures).length === 0) {
+    if (Object.keys(this.departures).length === 0 && Object.keys(this.errors).length === 0) {
       wrapper.textContent = this.translate("LOADING")
       wrapper.className = "dimmed light small"
       return wrapper
     }
 
-    let departuresRendered = false
+    let somethingRendered = false
 
     const getIconForRouteType = (routeType) => {
       switch (routeType) {
@@ -95,6 +89,15 @@ Module.register("MMM-PID", {
     }
 
     this.config.stops.forEach((stop) => {
+      if (this.errors[stop.aswIds]) {
+        const errorDiv = document.createElement("div")
+        errorDiv.className = "dimmed light small"
+        errorDiv.textContent = this.errors[stop.aswIds]
+        wrapper.appendChild(errorDiv)
+        somethingRendered = true
+        return
+      }
+
       const stopData = this.departures[stop.aswIds]
       if (stopData && stopData.departures) {
         let filteredDepartures = stopData.departures
@@ -105,7 +108,7 @@ Module.register("MMM-PID", {
         filteredDepartures = filteredDepartures.slice(0, stop.maxDepartures || 5)
 
         if (filteredDepartures.length > 0) {
-          departuresRendered = true
+          somethingRendered = true
           const stopWrapper = document.createElement("div")
           stopWrapper.className = "pid-stop"
 
@@ -170,7 +173,7 @@ Module.register("MMM-PID", {
       }
     })
 
-    if (!departuresRendered) {
+    if (!somethingRendered) {
       wrapper.textContent = this.translate("NO_DEPARTURES")
       wrapper.className = "dimmed light small"
     }

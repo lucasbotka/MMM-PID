@@ -17,7 +17,7 @@ module.exports = NodeHelper.create({
     const query_params = {
       aswIds: config.aswIds,
       filter: "none",
-      limit: 10,
+      limit: 20,
       skip: "atStop",
       minutesAfter: config.minutesAfter || 160,
     }
@@ -29,7 +29,6 @@ module.exports = NodeHelper.create({
       const response = await fetch(url.toString(), {
         headers: {
           "x-access-token": API_KEY,
-          "Content-Type": "application/json; charset=utf-8"
         },
       })
 
@@ -41,7 +40,7 @@ module.exports = NodeHelper.create({
       this.sendSocketNotification("DEPARTURES_DATA", { aswIds: config.aswIds, data: data })
     } catch (error) {
       console.error("Error fetching data: ", error)
-      this.sendSocketNotification("FETCH_ERROR", { error: error.message })
+      this.sendSocketNotification("FETCH_ERROR", { aswIds: config.aswIds, error: error.message })
     }
   },
 })
