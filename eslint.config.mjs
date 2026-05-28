@@ -24,11 +24,11 @@ export default defineConfig([
     plugins: { js, stylistic },
     extends: ["js/recommended", "stylistic/recommended"],
     rules: {
-      "@stylistic/brace-style": ["error", "1tbs", { allowSingleLine: true }],
-      "@stylistic/comma-dangle": ["error", "only-multiline"],
-      "@stylistic/max-statements-per-line": ["error", { max: 2 }],
-      "@stylistic/quotes": ["error", "double"]
-    }
+      "stylistic/brace-style": ["error", "1tbs", { allowSingleLine: true }],
+      "stylistic/comma-dangle": ["error", "only-multiline"],
+      "stylistic/max-statements-per-line": ["error", { max: 2 }],
+      "stylistic/quotes": ["error", "double"],
+    },
   },
   { files: ["**/*.md"], plugins: { markdown }, language: "markdown/gfm", extends: ["markdown/recommended"] },
 ])

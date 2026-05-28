@@ -19,7 +19,7 @@ module.exports = NodeHelper.create({
       filter: "none",
       limit: 10,
       skip: "atStop",
-      minutesAfter: config.minutesAfter || 160
+      minutesAfter: config.minutesAfter || 160,
     }
 
     const url = new URL("https://api.golemio.cz/v2/pid/departureboards/")
@@ -30,7 +30,7 @@ module.exports = NodeHelper.create({
         headers: {
           "x-access-token": API_KEY,
           "Content-Type": "application/json; charset=utf-8"
-        }
+        },
       })
 
       if (!response.ok) {
@@ -43,5 +43,5 @@ module.exports = NodeHelper.create({
       console.error("Error fetching data: ", error)
       this.sendSocketNotification("FETCH_ERROR", { error: error.message })
     }
-  }
+  },
 })

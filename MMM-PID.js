@@ -12,12 +12,12 @@ Module.register("MMM-PID", {
       {
         aswIds: "1973_2",
         allowed_routes: [],
-        maxDepartures: 5
-      }
+        maxDepartures: 5,
+      },
     ],
     minutesAfter: 160,
     updateInterval: 60000, // 1 minute
-    showIcons: true
+    showIcons: true,
   },
 
   start: function () {
@@ -45,7 +45,7 @@ Module.register("MMM-PID", {
       this.sendSocketNotification("GET_DEPARTURES", {
         apiKey: this.config.apiKey,
         aswIds: stop.aswIds,
-        minutesAfter: this.config.minutesAfter
+        minutesAfter: this.config.minutesAfter,
       })
     })
   },
@@ -66,13 +66,13 @@ Module.register("MMM-PID", {
     wrapper.className = "pid-departures"
 
     if (this.error) {
-      wrapper.innerHTML = this.error
+      wrapper.textContent = this.error
       wrapper.className = "dimmed light small"
       return wrapper
     }
 
     if (Object.keys(this.departures).length === 0) {
-      wrapper.innerHTML = this.translate("LOADING")
+      wrapper.textContent = this.translate("LOADING")
       wrapper.className = "dimmed light small"
       return wrapper
     }
@@ -111,7 +111,7 @@ Module.register("MMM-PID", {
 
           const stopName = document.createElement("div")
           stopName.className = "pid-stop-name"
-          stopName.innerHTML = (stopData.stops && stopData.stops.length > 0) ? stopData.stops[0].stop_name : stop.aswIds
+          stopName.textContent = (stopData.stops && stopData.stops.length > 0) ? stopData.stops[0].stop_name : stop.aswIds
           stopWrapper.appendChild(stopName)
 
           const departuresTable = document.createElement("table")
@@ -133,20 +133,24 @@ Module.register("MMM-PID", {
             // Line Name
             const lineCell = document.createElement("td")
             lineCell.className = "pid-line-name"
-            lineCell.innerHTML = departure.route.short_name
+            lineCell.textContent = departure.route.short_name
             row.appendChild(lineCell)
 
             // Minutes until departure
             const minutesCell = document.createElement("td")
             minutesCell.className = "pid-minutes"
-            minutesCell.innerHTML = `<span class="departs-in-text">${this.translate("DEPARTS_IN")} </span>${departure.departure_timestamp.minutes}&nbsp;${this.translate("MINUTES")}`
+            const departsSpan = document.createElement("span")
+            departsSpan.className = "departs-in-text"
+            departsSpan.textContent = `${this.translate("DEPARTS_IN")} `
+            minutesCell.appendChild(departsSpan)
+            minutesCell.appendChild(document.createTextNode(`${departure.departure_timestamp.minutes} ${this.translate("MINUTES")}`))
             row.appendChild(minutesCell)
 
             // Departure Time
             const timeCell = document.createElement("td")
             timeCell.className = "pid-departure-time"
             const departureTime = new Date(departure.departure_timestamp.estimated || departure.departure_timestamp.scheduled).toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" })
-            timeCell.innerHTML = departureTime
+            timeCell.textContent = departureTime
             row.appendChild(timeCell)
 
             // Delay
@@ -154,7 +158,7 @@ Module.register("MMM-PID", {
             delayCell.className = "pid-delay"
             const delayInMinutes = Math.round(departure.delay.seconds / 60)
             if (delayInMinutes > 0) {
-              delayCell.innerHTML = `+${delayInMinutes}`
+              delayCell.textContent = `+${delayInMinutes}`
             }
             row.appendChild(delayCell)
 
@@ -167,10 +171,10 @@ Module.register("MMM-PID", {
     })
 
     if (!departuresRendered) {
-      wrapper.innerHTML = this.translate("NO_DEPARTURES")
+      wrapper.textContent = this.translate("NO_DEPARTURES")
       wrapper.className = "dimmed light small"
     }
 
     return wrapper
-  }
+  },
 })
