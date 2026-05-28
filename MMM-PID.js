@@ -152,7 +152,7 @@ Module.register("MMM-PID", {
             // Departure Time
             const timeCell = document.createElement("td")
             timeCell.className = "pid-departure-time"
-            const departureTime = new Date(departure.departure_timestamp.estimated || departure.departure_timestamp.scheduled).toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" })
+            const departureTime = new Date(departure.departure_timestamp.scheduled).toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" })
             timeCell.textContent = departureTime
             row.appendChild(timeCell)
 
