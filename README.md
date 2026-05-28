@@ -62,7 +62,9 @@ In order to display departure boards for specific stops, you need to find their 
 				],
 				minutesAfter: 160,
 				updateInterval: 60000, // 1 min
-				showIcons: true
+				showIcons: true,
+				showWheelchairIcon: false,
+				showAirConditionedIcon: false
 			}
 		},
 ```
@@ -75,6 +77,8 @@ Option|Description
 `minutesAfter`| How many minutes ahead departures should be fetched (default: `160`)
 `updateInterval`| How often to refresh departures in milliseconds (default: `60000`)
 `showIcons`| Show transport type icons (default: `true`)
+`showWheelchairIcon`| Show wheelchair accessibility icon when available (default: `false`)
+`showAirConditionedIcon`| Show air conditioning icon when available (default: `false`)
 
 Each object in the `stops` array supports the following options:
 
