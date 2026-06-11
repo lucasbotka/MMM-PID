@@ -1,6 +1,7 @@
 {
   "LOADING": "Načítání odjezdů...",
   "API_ERROR": "Chyba API: ",
+  "STOP_NOT_FOUND": "Zastávka {aswIds} nebyla nalezena. Zkontrolujte aswIds v konfiguraci.",
   "DEPARTS_IN": "odjíždí za",
   "MINUTES": "min",
   "NO_DEPARTURES": "Žádné odjezdy neodpovídají vašim kritériím."

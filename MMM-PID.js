@@ -72,7 +72,11 @@ Module.register("MMM-PID", {
       this.departures[payload.aswIds] = payload.data
       this.updateDom()
     } else if (notification === "FETCH_ERROR") {
-      this.errors[payload.aswIds] = this.translate("API_ERROR") + payload.error
+      if (payload.status === 404) {
+        this.errors[payload.aswIds] = this.translate("STOP_NOT_FOUND", { aswIds: payload.aswIds })
+      } else {
+        this.errors[payload.aswIds] = this.translate("API_ERROR") + payload.error
+      }
       this.updateDom()
     }
   },
