@@ -30,6 +30,7 @@ module.exports = NodeHelper.create({
         headers: {
           "x-access-token": API_KEY,
         },
+        signal: AbortSignal.timeout(15000),
       })
 
       if (!response.ok) {
