@@ -125,7 +125,7 @@ Module.register("MMM-PID", {
           filteredDepartures = filteredDepartures.filter(dep => stop.allowed_routes.includes(dep.route.short_name))
         }
 
-        filteredDepartures = filteredDepartures.slice(0, stop.maxDepartures || 5)
+        filteredDepartures = filteredDepartures.slice(0, stop.maxDepartures ?? 5)
 
         if (filteredDepartures.length > 0) {
           somethingRendered = true
