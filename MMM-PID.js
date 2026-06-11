@@ -141,6 +141,26 @@ Module.register("MMM-PID", {
             lineCell.textContent = departure.route.short_name
             row.appendChild(lineCell)
 
+            // Wheelchair
+            const wheelchairCell = document.createElement("td")
+            wheelchairCell.className = "pid-wheelchair"
+            if (this.config.showWheelchairIcon && departure.trip.is_wheelchair_accessible) {
+              const icon = document.createElement("i")
+              icon.className = "fas fa-wheelchair"
+              wheelchairCell.appendChild(icon)
+            }
+            row.appendChild(wheelchairCell)
+
+            // Air conditioning
+            const acCell = document.createElement("td")
+            acCell.className = "pid-air-conditioned"
+            if (this.config.showAirConditionedIcon && departure.trip.is_air_conditioned) {
+              const icon = document.createElement("i")
+              icon.className = "fas fa-snowflake"
+              acCell.appendChild(icon)
+            }
+            row.appendChild(acCell)
+
             // Minutes until departure
             const minutesCell = document.createElement("td")
             minutesCell.className = "pid-minutes"
@@ -166,26 +186,6 @@ Module.register("MMM-PID", {
               delayCell.textContent = `+${delayInMinutes}`
             }
             row.appendChild(delayCell)
-
-            // Wheelchair
-            const wheelchairCell = document.createElement("td")
-            wheelchairCell.className = "pid-wheelchair"
-            if (this.config.showWheelchairIcon && departure.trip.is_wheelchair_accessible) {
-              const icon = document.createElement("i")
-              icon.className = "fas fa-wheelchair"
-              wheelchairCell.appendChild(icon)
-            }
-            row.appendChild(wheelchairCell)
-
-            // Air conditioning
-            const acCell = document.createElement("td")
-            acCell.className = "pid-air-conditioned"
-            if (this.config.showAirConditionedIcon && departure.trip.is_air_conditioned) {
-              const icon = document.createElement("i")
-              icon.className = "fas fa-snowflake"
-              acCell.appendChild(icon)
-            }
-            row.appendChild(acCell)
 
             departuresTable.appendChild(row)
           })
