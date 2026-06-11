@@ -25,6 +25,10 @@ Module.register("MMM-PID", {
   start: function () {
     this.departures = {}
     this.errors = {}
+    if (!this.config.apiKey || this.config.apiKey === "YOUR_GOLEMIO_API_KEY") {
+      this.configError = true
+      return
+    }
     this.getDepartures()
     this.scheduleUpdates()
   },
@@ -40,6 +44,9 @@ Module.register("MMM-PID", {
   },
 
   resume: function () {
+    if (this.configError) {
+      return
+    }
     clearInterval(this.updateTimer)
     this.getDepartures()
     this.scheduleUpdates()
@@ -99,6 +106,12 @@ Module.register("MMM-PID", {
   getDom: function () {
     const wrapper = document.createElement("div")
     wrapper.className = "pid-departures"
+
+    if (this.configError) {
+      wrapper.textContent = this.translate("NO_API_KEY")
+      wrapper.className = "dimmed light small"
+      return wrapper
+    }
 
     if (Object.keys(this.departures).length === 0 && Object.keys(this.errors).length === 0) {
       wrapper.textContent = this.translate("LOADING")

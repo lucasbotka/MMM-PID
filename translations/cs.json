@@ -1,6 +1,7 @@
 {
   "LOADING": "Načítání odjezdů...",
   "API_ERROR": "Chyba API: ",
+  "NO_API_KEY": "Chybí API klíč. Vložte svůj Golemio klíč do konfigurace modulu.",
   "STOP_NOT_FOUND": "Zastávka {aswIds} nebyla nalezena. Zkontrolujte aswIds v konfiguraci.",
   "DEPARTS_IN": "odjíždí za",
   "MINUTES": "min",

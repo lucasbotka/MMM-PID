@@ -1,6 +1,7 @@
 {
   "LOADING": "Loading departures...",
   "API_ERROR": "API Error: ",
+  "NO_API_KEY": "Missing API key. Add your Golemio API key to the module configuration.",
   "STOP_NOT_FOUND": "Stop {aswIds} not found. Check the aswIds in your configuration.",
   "DEPARTS_IN": "departs in",
   "MINUTES": "min",
