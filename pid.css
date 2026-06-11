@@ -55,8 +55,19 @@
 }
 
 .pid-delay {
-    color: #ff8a80; /* Red color for delays */
+    color: #ff8a80;
     font-size: 0.9em;
     text-align: left;
     padding-left: 10px;
+}
+
+.pid-wheelchair,
+.pid-air-conditioned {
+    text-align: center;
+    width: 20px;
+}
+
+.pid-wheelchair .fas,
+.pid-air-conditioned .fas {
+    color: #888;
 }
