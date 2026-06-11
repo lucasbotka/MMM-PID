@@ -26,9 +26,23 @@ Module.register("MMM-PID", {
     this.departures = {}
     this.errors = {}
     this.getDepartures()
-    setInterval(() => {
+    this.scheduleUpdates()
+  },
+
+  scheduleUpdates: function () {
+    this.updateTimer = setInterval(() => {
       this.getDepartures()
     }, this.config.updateInterval)
+  },
+
+  suspend: function () {
+    clearInterval(this.updateTimer)
+  },
+
+  resume: function () {
+    clearInterval(this.updateTimer)
+    this.getDepartures()
+    this.scheduleUpdates()
   },
 
   getStyles: function () {
