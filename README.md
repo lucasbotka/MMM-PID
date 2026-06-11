@@ -88,6 +88,8 @@ Option|Description
 `allowed_routes`| Only show these line numbers. Empty array means all lines. Eg. `[ '375', '367' ]`
 `maxDepartures`| Maximum number of departures to display for this stop (default: `5`)
 
+> **Note:** Canceled trips and vehicles currently standing at the stop are not displayed.
+
 
 
 

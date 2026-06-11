@@ -15,13 +15,15 @@ module.exports = NodeHelper.create({
     const API_KEY = config.apiKey
 
     const url = new URL("https://api.golemio.cz/v2/pid/departureboards/")
-    url.search = new URLSearchParams({
+    const params = new URLSearchParams({
       aswIds: config.aswIds,
       filter: "none",
-      limit: 20,
-      skip: "atStop",
+      limit: 30,
       minutesAfter: config.minutesAfter || 160,
-    }).toString()
+    })
+    params.append("skip[]", "atStop")
+    params.append("skip[]", "canceled")
+    url.search = params.toString()
 
     try {
       const response = await fetch(url, {

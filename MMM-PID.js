@@ -181,9 +181,8 @@ Module.register("MMM-PID", {
             // Delay
             const delayCell = document.createElement("td")
             delayCell.className = "pid-delay"
-            const delayInMinutes = Math.round(departure.delay.seconds / 60)
-            if (delayInMinutes > 0) {
-              delayCell.textContent = `+${delayInMinutes}`
+            if (departure.delay.is_available && departure.delay.minutes > 0) {
+              delayCell.textContent = `+${departure.delay.minutes}`
             }
             row.appendChild(delayCell)
 
