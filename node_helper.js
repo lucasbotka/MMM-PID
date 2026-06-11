@@ -19,7 +19,7 @@ module.exports = NodeHelper.create({
       aswIds: config.aswIds,
       filter: "none",
       limit: 30,
-      minutesAfter: config.minutesAfter || 160,
+      minutesAfter: config.minutesAfter,
     })
     params.append("skip[]", "atStop")
     params.append("skip[]", "canceled")
