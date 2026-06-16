@@ -173,24 +173,28 @@ Module.register("MMM-PID", {
             row.appendChild(lineCell)
 
             // Wheelchair
-            const wheelchairCell = document.createElement("td")
-            wheelchairCell.className = "pid-wheelchair"
-            if (this.config.showWheelchairIcon && departure.trip.is_wheelchair_accessible) {
-              const icon = document.createElement("i")
-              icon.className = "fas fa-wheelchair"
-              wheelchairCell.appendChild(icon)
+            if (this.config.showWheelchairIcon) {
+              const wheelchairCell = document.createElement("td")
+              wheelchairCell.className = "pid-wheelchair"
+              if (departure.trip.is_wheelchair_accessible) {
+                const icon = document.createElement("i")
+                icon.className = "fas fa-wheelchair"
+                wheelchairCell.appendChild(icon)
+              }
+              row.appendChild(wheelchairCell)
             }
-            row.appendChild(wheelchairCell)
 
             // Air conditioning
-            const acCell = document.createElement("td")
-            acCell.className = "pid-air-conditioned"
-            if (this.config.showAirConditionedIcon && departure.trip.is_air_conditioned) {
-              const icon = document.createElement("i")
-              icon.className = "fas fa-snowflake"
-              acCell.appendChild(icon)
+            if (this.config.showAirConditionedIcon) {
+              const acCell = document.createElement("td")
+              acCell.className = "pid-air-conditioned"
+              if (departure.trip.is_air_conditioned) {
+                const icon = document.createElement("i")
+                icon.className = "fas fa-snowflake"
+                acCell.appendChild(icon)
+              }
+              row.appendChild(acCell)
             }
-            row.appendChild(acCell)
 
             // Minutes until departure
             const minutesCell = document.createElement("td")
