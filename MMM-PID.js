@@ -157,14 +157,14 @@ Module.register("MMM-PID", {
             const row = document.createElement("tr")
 
             // Icon
-            const iconCell = document.createElement("td")
-            iconCell.className = "pid-icon"
             if (this.config.showIcons) {
+              const iconCell = document.createElement("td")
+              iconCell.className = "pid-icon"
               const icon = document.createElement("i")
               icon.className = this.getIconForRouteType(departure.route.type)
               iconCell.appendChild(icon)
+              row.appendChild(iconCell)
             }
-            row.appendChild(iconCell)
 
             // Line Name
             const lineCell = document.createElement("td")
