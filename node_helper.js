@@ -49,10 +49,10 @@ module.exports = NodeHelper.create({
       }
 
       const data = await response.json()
-      this.sendSocketNotification("DEPARTURES_DATA", { aswIds: config.aswIds, data: data })
+      this.sendSocketNotification("DEPARTURES_DATA", { identifier: config.identifier, aswIds: config.aswIds, data: data })
     } catch (error) {
       console.error("Error fetching data: ", error)
-      this.sendSocketNotification("FETCH_ERROR", { aswIds: config.aswIds, error: error.message, status: error.status })
+      this.sendSocketNotification("FETCH_ERROR", { identifier: config.identifier, aswIds: config.aswIds, error: error.message, status: error.status })
     }
   },
 })

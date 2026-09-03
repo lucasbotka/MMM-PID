@@ -25,6 +25,7 @@ Module.register("MMM-PID", {
   start: function () {
     this.departures = {}
     this.errors = {}
+    this.authError = null
     if (!this.config.apiKey || this.config.apiKey === "YOUR_GOLEMIO_API_KEY") {
       this.configError = true
       return
@@ -39,15 +40,20 @@ Module.register("MMM-PID", {
     }, this.config.updateInterval)
   },
 
-  suspend: function () {
+  stopUpdates: function () {
     clearInterval(this.updateTimer)
+    this.updateTimer = null
+  },
+
+  suspend: function () {
+    this.stopUpdates()
   },
 
   resume: function () {
-    if (this.configError) {
+    if (this.configError || this.authError) {
       return
     }
-    clearInterval(this.updateTimer)
+    this.stopUpdates()
     this.getDepartures()
     this.scheduleUpdates()
   },
@@ -66,6 +72,7 @@ Module.register("MMM-PID", {
   getDepartures: function () {
     this.config.stops.forEach((stop) => {
       this.sendSocketNotification("GET_DEPARTURES", {
+        identifier: this.identifier,
         apiKey: this.config.apiKey,
         aswIds: stop.aswIds,
         minutesAfter: this.config.minutesAfter,
@@ -74,12 +81,22 @@ Module.register("MMM-PID", {
   },
 
   socketNotificationReceived: function (notification, payload) {
+    // The node helper broadcasts to every instance of this module, so drop
+    // anything that was not requested by this one.
+    if (!payload || payload.identifier !== this.identifier) {
+      return
+    }
+
     if (notification === "DEPARTURES_DATA") {
       delete this.errors[payload.aswIds]
       this.departures[payload.aswIds] = payload.data
       this.updateDom()
     } else if (notification === "FETCH_ERROR") {
-      if (payload.status === 404) {
+      if (payload.status === 401 || payload.status === 403) {
+        // The key is shared by every stop, so retrying cannot help - stop polling.
+        this.authError = this.translate("AUTH_ERROR", { status: payload.status })
+        this.stopUpdates()
+      } else if (payload.status === 404) {
         this.errors[payload.aswIds] = this.translate("STOP_NOT_FOUND", { aswIds: payload.aswIds })
       } else {
         this.errors[payload.aswIds] = this.translate("API_ERROR") + payload.error
@@ -109,6 +126,12 @@ Module.register("MMM-PID", {
 
     if (this.configError) {
       wrapper.textContent = this.translate("NO_API_KEY")
+      wrapper.className = "dimmed light small"
+      return wrapper
+    }
+
+    if (this.authError) {
+      wrapper.textContent = this.authError
       wrapper.className = "dimmed light small"
       return wrapper
     }
