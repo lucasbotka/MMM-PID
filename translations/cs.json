@@ -1,6 +1,7 @@
 {
   "LOADING": "Načítání odjezdů...",
   "API_ERROR": "Chyba API: ",
+  "BAD_RESPONSE": "Neočekávaná odpověď API.",
   "AUTH_ERROR": "API klíč byl odmítnut (HTTP {status}). Zkontrolujte svůj Golemio klíč v konfiguraci modulu. Aktualizace byly zastaveny.",
   "NO_API_KEY": "Chybí API klíč. Vložte svůj Golemio klíč do konfigurace modulu.",
   "NO_STOPS": "V konfiguraci modulu nejsou žádné zastávky. Doplňte pole stops.",

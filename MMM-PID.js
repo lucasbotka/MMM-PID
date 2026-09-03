@@ -121,8 +121,13 @@ Module.register("MMM-PID", {
     }
 
     if (notification === "DEPARTURES_DATA") {
-      delete this.errors[payload.aswIds]
-      this.departures[payload.aswIds] = payload.data
+      const board = this.sanitizeBoard(payload.data)
+      if (board) {
+        delete this.errors[payload.aswIds]
+        this.departures[payload.aswIds] = board
+      } else {
+        this.errors[payload.aswIds] = this.translate("BAD_RESPONSE")
+      }
       this.updateDom()
     } else if (notification === "FETCH_ERROR") {
       if (payload.status === 401 || payload.status === 403) {
@@ -136,6 +141,22 @@ Module.register("MMM-PID", {
       }
       this.updateDom()
     }
+  },
+
+  // Third-party input: keep only departures carrying every object getDom() dereferences
+  sanitizeBoard: function (data) {
+    const raw = Array.isArray(data?.departures) ? data.departures : null
+    if (!raw) {
+      return null
+    }
+    const departures = raw.filter(d => d && d.route && d.trip && d.delay && d.departure_timestamp)
+    if (raw.length > 0 && departures.length === 0) {
+      return null
+    }
+    if (departures.length < raw.length) {
+      Log.warn(`${this.name}: dropped ${raw.length - departures.length} malformed departures`)
+    }
+    return { stops: Array.isArray(data.stops) ? data.stops : [], departures }
   },
 
   getIconForRouteType: function (routeType) {
