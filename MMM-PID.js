@@ -183,8 +183,10 @@ Module.register("MMM-PID", {
       const stopData = this.departures[stop.aswIds]
       if (stopData && stopData.departures) {
         let filteredDepartures = stopData.departures
-        if (stop.allowed_routes && stop.allowed_routes.length > 0) {
-          filteredDepartures = filteredDepartures.filter(dep => stop.allowed_routes.includes(dep.route.short_name))
+        // Config may hold numbers, a bare string or stray whitespace - compare as normalized text
+        const routes = [].concat(stop.allowed_routes ?? []).map(r => String(r).trim().toUpperCase()).filter(Boolean)
+        if (routes.length > 0) {
+          filteredDepartures = filteredDepartures.filter(dep => routes.includes(String(dep.route.short_name).toUpperCase()))
         }
 
         filteredDepartures = filteredDepartures.slice(0, stop.maxDepartures ?? 5)
