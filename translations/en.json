@@ -3,6 +3,7 @@
   "API_ERROR": "API Error: ",
   "AUTH_ERROR": "API key rejected (HTTP {status}). Check your Golemio key in the module configuration. Updates have been stopped.",
   "NO_API_KEY": "Missing API key. Add your Golemio API key to the module configuration.",
+  "NO_STOPS": "No stops configured. Add a stops array to the module configuration.",
   "STOP_NOT_FOUND": "Stop {aswIds} not found. Check the aswIds in your configuration.",
   "DEPARTS_IN": "departs in",
   "MINUTES": "min",

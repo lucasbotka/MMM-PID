@@ -32,9 +32,16 @@ Module.register("MMM-PID", {
     this.lastFetch = 0
     this.config.updateInterval = this.sanitizedUpdateInterval()
     if (!this.config.apiKey || this.config.apiKey === "YOUR_GOLEMIO_API_KEY") {
-      this.configError = true
+      this.configError = "NO_API_KEY"
       return
     }
+    // stops must be a list of objects - anything else cannot be polled and would throw below
+    const stops = Array.isArray(this.config.stops) ? this.config.stops.filter(s => s && typeof s === "object") : []
+    if (stops.length === 0) {
+      this.configError = "NO_STOPS"
+      return
+    }
+    this.config.stops = stops
     this.getDepartures()
     this.scheduleUpdates()
   },
@@ -151,7 +158,7 @@ Module.register("MMM-PID", {
     wrapper.className = "pid-departures"
 
     if (this.configError) {
-      wrapper.textContent = this.translate("NO_API_KEY")
+      wrapper.textContent = this.translate(this.configError)
       wrapper.className = "dimmed light small"
       return wrapper
     }
