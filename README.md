@@ -75,7 +75,7 @@ Option|Description
 `apiKey`| Your Golemio API [key](https://api.golemio.cz/api-keys/auth/sign-in)
 `stops`| Array of stop objects (see below)
 `minutesAfter`| How many minutes ahead departures should be fetched (default: `160`)
-`updateInterval`| How often to refresh departures in milliseconds (default: `60000`)
+`updateInterval`| How often to refresh departures in milliseconds (default: `60000`, minimum: `30000`)
 `showIcons`| Show transport type icons (default: `true`)
 `showWheelchairIcon`| Show wheelchair accessibility icon when available (default: `false`)
 `showAirConditionedIcon`| Show air conditioning icon when available (default: `false`)

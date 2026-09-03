@@ -5,6 +5,9 @@
  * MIT Licensed.
  */
 
+// Floor for updateInterval - a typo like 60 (meant as seconds) would otherwise poll hundreds of times a second
+const MIN_UPDATE_INTERVAL = 30000
+
 Module.register("MMM-PID", {
   defaults: {
     apiKey: "YOUR_GOLEMIO_API_KEY",
@@ -26,6 +29,8 @@ Module.register("MMM-PID", {
     this.departures = {}
     this.errors = {}
     this.authError = null
+    this.lastFetch = 0
+    this.config.updateInterval = this.sanitizedUpdateInterval()
     if (!this.config.apiKey || this.config.apiKey === "YOUR_GOLEMIO_API_KEY") {
       this.configError = true
       return
@@ -34,14 +39,28 @@ Module.register("MMM-PID", {
     this.scheduleUpdates()
   },
 
-  scheduleUpdates: function () {
-    this.updateTimer = setInterval(() => {
+  sanitizedUpdateInterval: function () {
+    const interval = Number(this.config.updateInterval)
+    if (!Number.isFinite(interval)) {
+      Log.warn(`${this.name}: updateInterval is not a number, falling back to ${this.defaults.updateInterval} ms`)
+      return this.defaults.updateInterval
+    }
+    if (interval < MIN_UPDATE_INTERVAL) {
+      Log.warn(`${this.name}: updateInterval ${this.config.updateInterval} is below the ${MIN_UPDATE_INTERVAL} ms minimum, clamping`)
+      return MIN_UPDATE_INTERVAL
+    }
+    return interval
+  },
+
+  scheduleUpdates: function (delay) {
+    this.updateTimer = setTimeout(() => {
       this.getDepartures()
-    }, this.config.updateInterval)
+      this.scheduleUpdates()
+    }, delay ?? this.config.updateInterval)
   },
 
   stopUpdates: function () {
-    clearInterval(this.updateTimer)
+    clearTimeout(this.updateTimer)
     this.updateTimer = null
   },
 
@@ -54,8 +73,14 @@ Module.register("MMM-PID", {
       return
     }
     this.stopUpdates()
-    this.getDepartures()
-    this.scheduleUpdates()
+    // show() fires resume() even on a module that was never hidden - refetch only stale data
+    const age = Date.now() - this.lastFetch
+    if (age >= this.config.updateInterval) {
+      this.getDepartures()
+      this.scheduleUpdates()
+    } else {
+      this.scheduleUpdates(this.config.updateInterval - age)
+    }
   },
 
   getStyles: function () {
@@ -70,6 +95,7 @@ Module.register("MMM-PID", {
   },
 
   getDepartures: function () {
+    this.lastFetch = Date.now()
     this.config.stops.forEach((stop) => {
       this.sendSocketNotification("GET_DEPARTURES", {
         identifier: this.identifier,
