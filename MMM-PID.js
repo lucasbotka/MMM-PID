@@ -16,7 +16,7 @@ Module.register("MMM-PID", {
       {
         aswIds: "1973_2",
         allowed_routes: [],
-        maxDepartures: 5,
+        maxDepartures: DEFAULT_MAX_DEPARTURES,
       },
     ],
     minutesAfter: 160,
