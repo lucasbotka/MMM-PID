@@ -6,7 +6,7 @@
   "NO_API_KEY": "Missing API key. Add your Golemio API key to the module configuration.",
   "NO_STOPS": "No stops configured. Add a stops array to the module configuration.",
   "STOP_NOT_FOUND": "Stop {aswIds} not found. Check the aswIds in your configuration.",
-  "DEPARTS_IN": "departs in",
+  "DELAY": "{minutes} min late",
   "MINUTES": "min",
   "NO_DEPARTURES": "No departures matching your criteria."
 }

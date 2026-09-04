@@ -2,7 +2,7 @@
 
 [![Lint](https://github.com/lucasbotka/MMM-PID/actions/workflows/lint.yml/badge.svg)](https://github.com/lucasbotka/MMM-PID/actions/workflows/lint.yml)
 
-*MMM-PID* is a module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) that displays real-time departure boards for public transport stops within the [PID](https://pid.cz/) system. Using the free Golemio API, it shows departure times, including any current delays, for Prague and the surrounding region in the Czech Republic.
+*MMM-PID* is a module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) that displays real-time departure boards for public transport stops within the [PID](https://pid.cz/) system. Using the free Golemio API, it shows the line, the destination, the departure time including any current delay and a countdown in minutes, for Prague and the surrounding region in the Czech Republic.
 
 
 ## Screenshot
@@ -65,6 +65,7 @@ In order to display departure boards for specific stops, you need to find their 
 				],
 				minutesAfter: 160,
 				updateInterval: 60000, // 1 min
+				departureTimeSource: "predicted",
 				showIcons: true,
 				showWheelchairIcon: false,
 				showAirConditionedIcon: false
@@ -79,7 +80,8 @@ Option|Description
 `stops`| Array of stop objects (see below)
 `minutesAfter`| How many minutes ahead departures should be fetched (default: `160`)
 `updateInterval`| How often to refresh departures in milliseconds (default: `60000`, minimum: `30000`)
-`showIcons`| Show transport type icons (default: `true`)
+`departureTimeSource`| Which time the board counts down to: `"predicted"` shows the time the vehicle is really expected (schedule plus delay), `"scheduled"` shows the timetable time. The delay is reported either way (default: `"predicted"`)
+`showIcons`| Show a transport type icon in the stop heading, one per mode the stop serves (default: `true`)
 `showWheelchairIcon`| Show wheelchair accessibility icon when available (default: `false`)
 `showAirConditionedIcon`| Show air conditioning icon when available (default: `false`)
 

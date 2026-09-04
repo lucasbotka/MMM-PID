@@ -21,6 +21,7 @@ Module.register("MMM-PID", {
     ],
     minutesAfter: 160,
     updateInterval: 60000, // 1 minute
+    departureTimeSource: "predicted",
     showIcons: true,
     showWheelchairIcon: false,
     showAirConditionedIcon: false,
@@ -32,6 +33,7 @@ Module.register("MMM-PID", {
     this.authError = null
     this.lastFetch = 0
     this.config.updateInterval = this.sanitizedUpdateInterval()
+    this.config.departureTimeSource = this.sanitizedTimeSource()
     if (!this.config.apiKey || this.config.apiKey === "YOUR_GOLEMIO_API_KEY") {
       this.configError = "NO_API_KEY"
       return
@@ -82,6 +84,29 @@ Module.register("MMM-PID", {
       return DEFAULT_MAX_DEPARTURES
     }
     return max
+  },
+
+  // The time column and the countdown both read departureTime(), so this one switch moves them together
+  sanitizedTimeSource: function () {
+    const source = this.config.departureTimeSource
+    if (source === "predicted" || source === "scheduled") {
+      return source
+    }
+    Log.warn(`${this.name}: unknown departureTimeSource "${source}", falling back to ${this.defaults.departureTimeSource}`)
+    return this.defaults.departureTimeSource
+  },
+
+  // Single source of truth for one departure - a delayed row can never show a time the countdown disagrees with
+  departureTime: function (departure) {
+    const ts = departure.departure_timestamp
+    const order = this.config.departureTimeSource === "scheduled" ? [ts.scheduled, ts.predicted] : [ts.predicted, ts.scheduled]
+    for (const stamp of order) {
+      const time = typeof stamp === "string" ? new Date(stamp) : null
+      if (time && !Number.isNaN(time.getTime())) {
+        return time
+      }
+    }
+    return null
   },
 
   scheduleUpdates: function (delay) {
@@ -174,7 +199,7 @@ Module.register("MMM-PID", {
     if (!raw) {
       return null
     }
-    const departures = raw.filter(d => d && d.route && d.trip && d.delay && d.departure_timestamp)
+    const departures = raw.filter(d => d && d.route && d.trip && d.delay && d.departure_timestamp && this.departureTime(d))
     if (raw.length > 0 && departures.length === 0) {
       return null
     }
@@ -204,6 +229,104 @@ Module.register("MMM-PID", {
       default:
         return "fas fa-bus" // Unknown
     }
+  },
+
+  // One icon per mode the stop actually serves - a node aswIds mixes metro and buses in a single block.
+  // Sorted by route type so the icons keep their order between refreshes, deduped by glyph because
+  // trolleybuses and unknown types share fa-bus.
+  modeIcons: function (departures) {
+    const types = [...new Set(departures.map(d => d.route.type))].sort((a, b) => a - b)
+    return [...new Set(types.map(type => this.getIconForRouteType(type)))]
+  },
+
+  renderStop: function (stop, stopData, departures) {
+    const stopWrapper = document.createElement("div")
+    stopWrapper.className = "pid-stop"
+
+    const stopName = document.createElement("div")
+    stopName.className = "pid-stop-name"
+
+    if (this.config.showIcons) {
+      this.modeIcons(departures).forEach((iconClass) => {
+        const icon = document.createElement("i")
+        icon.className = iconClass
+        stopName.appendChild(icon)
+      })
+    }
+
+    // GTFS names are heavily abbreviated - customName lets the user override them, blank falls back to the API
+    const customName = typeof stop.customName === "string" ? stop.customName.trim() : ""
+    stopName.appendChild(document.createTextNode(customName || (stopData.stops.length > 0 ? stopData.stops[0].stop_name : stop.aswIds)))
+    stopWrapper.appendChild(stopName)
+
+    departures.forEach((departure) => {
+      stopWrapper.appendChild(this.renderDeparture(departure))
+    })
+
+    return stopWrapper
+  },
+
+  renderDeparture: function (departure) {
+    const row = document.createElement("div")
+    row.className = "pid-departure"
+
+    const line = document.createElement("div")
+    line.className = "pid-line-name"
+    line.textContent = departure.route.short_name
+    row.appendChild(line)
+
+    const trip = document.createElement("div")
+    trip.className = "pid-trip"
+
+    const destination = document.createElement("div")
+    destination.className = "pid-destination"
+    destination.textContent = departure.trip.headsign
+    trip.appendChild(destination)
+
+    // sanitizeBoard() drops departures without a usable timestamp, so this is never null here
+    const time = this.departureTime(departure)
+
+    const timeRow = document.createElement("div")
+    timeRow.className = "pid-time-row"
+    timeRow.appendChild(document.createTextNode(time.toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" })))
+
+    // The delay note is the only red element - the time itself stays white whichever source it came from
+    const delayMinutes = departure.delay.is_available ? Math.round(departure.delay.minutes) : 0
+    if (delayMinutes > 0) {
+      const delay = document.createElement("span")
+      delay.className = "pid-delay"
+      delay.textContent = this.translate("DELAY", { minutes: delayMinutes })
+      timeRow.appendChild(delay)
+    }
+
+    if (this.config.showWheelchairIcon && departure.trip.is_wheelchair_accessible) {
+      const icon = document.createElement("i")
+      icon.className = "fas fa-wheelchair"
+      timeRow.appendChild(icon)
+    }
+
+    if (this.config.showAirConditionedIcon && departure.trip.is_air_conditioned) {
+      const icon = document.createElement("i")
+      icon.className = "fas fa-snowflake"
+      timeRow.appendChild(icon)
+    }
+
+    trip.appendChild(timeRow)
+    row.appendChild(trip)
+
+    const minutes = document.createElement("div")
+    minutes.className = "pid-minutes"
+    const value = document.createElement("span")
+    value.className = "pid-minutes-value"
+    value.textContent = Math.max(0, Math.round((time.getTime() - Date.now()) / 60000))
+    const unit = document.createElement("span")
+    unit.className = "pid-minutes-unit"
+    unit.textContent = this.translate("MINUTES")
+    minutes.appendChild(value)
+    minutes.appendChild(unit)
+    row.appendChild(minutes)
+
+    return row
   },
 
   getDom: function () {
@@ -253,91 +376,7 @@ Module.register("MMM-PID", {
 
         if (filteredDepartures.length > 0) {
           somethingRendered = true
-          const stopWrapper = document.createElement("div")
-          stopWrapper.className = "pid-stop"
-
-          const stopName = document.createElement("div")
-          stopName.className = "pid-stop-name"
-          // GTFS names are heavily abbreviated - customName lets the user override them, blank falls back to the API
-          const customName = typeof stop.customName === "string" ? stop.customName.trim() : ""
-          stopName.textContent = customName || (stopData.stops.length > 0 ? stopData.stops[0].stop_name : stop.aswIds)
-          stopWrapper.appendChild(stopName)
-
-          const departuresTable = document.createElement("table")
-          departuresTable.className = "pid-departures-table"
-
-          filteredDepartures.forEach((departure) => {
-            const row = document.createElement("tr")
-
-            // Icon
-            if (this.config.showIcons) {
-              const iconCell = document.createElement("td")
-              iconCell.className = "pid-icon"
-              const icon = document.createElement("i")
-              icon.className = this.getIconForRouteType(departure.route.type)
-              iconCell.appendChild(icon)
-              row.appendChild(iconCell)
-            }
-
-            // Line Name
-            const lineCell = document.createElement("td")
-            lineCell.className = "pid-line-name"
-            lineCell.textContent = departure.route.short_name
-            row.appendChild(lineCell)
-
-            // Wheelchair
-            if (this.config.showWheelchairIcon) {
-              const wheelchairCell = document.createElement("td")
-              wheelchairCell.className = "pid-wheelchair"
-              if (departure.trip.is_wheelchair_accessible) {
-                const icon = document.createElement("i")
-                icon.className = "fas fa-wheelchair"
-                wheelchairCell.appendChild(icon)
-              }
-              row.appendChild(wheelchairCell)
-            }
-
-            // Air conditioning
-            if (this.config.showAirConditionedIcon) {
-              const acCell = document.createElement("td")
-              acCell.className = "pid-air-conditioned"
-              if (departure.trip.is_air_conditioned) {
-                const icon = document.createElement("i")
-                icon.className = "fas fa-snowflake"
-                acCell.appendChild(icon)
-              }
-              row.appendChild(acCell)
-            }
-
-            // Minutes until departure
-            const minutesCell = document.createElement("td")
-            minutesCell.className = "pid-minutes"
-            const departsSpan = document.createElement("span")
-            departsSpan.className = "departs-in-text"
-            departsSpan.textContent = `${this.translate("DEPARTS_IN")} `
-            minutesCell.appendChild(departsSpan)
-            minutesCell.appendChild(document.createTextNode(`${departure.departure_timestamp.minutes} ${this.translate("MINUTES")}`))
-            row.appendChild(minutesCell)
-
-            // Departure Time
-            const timeCell = document.createElement("td")
-            timeCell.className = "pid-departure-time"
-            const departureTime = new Date(departure.departure_timestamp.scheduled).toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" })
-            timeCell.textContent = departureTime
-            row.appendChild(timeCell)
-
-            // Delay
-            const delayCell = document.createElement("td")
-            delayCell.className = "pid-delay"
-            if (departure.delay.is_available && departure.delay.minutes > 0) {
-              delayCell.textContent = `+${departure.delay.minutes}`
-            }
-            row.appendChild(delayCell)
-
-            departuresTable.appendChild(row)
-          })
-          stopWrapper.appendChild(departuresTable)
-          wrapper.appendChild(stopWrapper)
+          wrapper.appendChild(this.renderStop(stop, stopData, filteredDepartures))
         }
       }
     })

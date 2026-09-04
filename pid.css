@@ -1,73 +1,114 @@
-.pid-departures {
-    width: -moz-fit-content;
-    width: fit-content;
-}
+/* Board layout: each departure is a 3-column grid row (line - trip - countdown). */
 
-.pid-stop-name {
-    font-weight: bold;
-    margin-bottom: 5px;
+.pid-departures {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* space between stop blocks */
+    width: 360px;
+    max-width: 100%;
+    text-align: left;
+    /* MagicMirror sets line-height on body as an absolute value, which would inflate every row */
+    line-height: 1.2;
 }
 
 .pid-stop {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.pid-departures-table {
-    border-collapse: collapse;
+.pid-stop-name {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8a8a8a;
 }
 
-.pid-departures-table td {
-    padding: 2px 5px;
-    text-align: left;
+.pid-stop-name .fas {
+    flex: none;
+    font-size: 11px;
+    color: #6e6e6e;
 }
 
-.pid-departures-table .pid-icon {
-    width: 30px; /* Fixed width for the icon column */
-    text-align: center;
-}
-
-.pid-departures-table .pid-icon .fas {
-    color: #ccc;
+.pid-departure {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-top: 1px solid #1c1c1c;
 }
 
 .pid-line-name {
-    font-weight: bold;
-    width: 40px;
-}
-
-.pid-minutes {
-    font-weight: bold;
+    font-size: 19px;
+    font-weight: 700;
     color: #fff;
-    text-align: right;
-    width: 170px;
+    font-variant-numeric: tabular-nums;
+    /* named lines like IKEA or X-B would otherwise spill into the destination */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-.pid-minutes .departs-in-text {
-    font-weight: normal;
-    color: #ccc;
-    margin-right: 10px;
+.pid-trip {
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* required so the destination can ellipsize */
 }
 
-.pid-departure-time {
-    text-align: left;
-    font-size: 0.9em;
-    color: #ccc;
+.pid-destination {
+    font-size: 14px;
+    line-height: 1.1;
+    color: #c4c4c4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pid-time-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #fff; /* stays white even when the trip is delayed */
+    font-variant-numeric: tabular-nums;
+    overflow: hidden; /* delay note plus both amenity icons must not reach the countdown */
+}
+
+/* No font-weight here - Font Awesome 6 Free ships the solid set at 900 only */
+.pid-time-row .fas {
+    flex: none;
+    font-size: 10px;
+    color: #4a4a4a;
 }
 
 .pid-delay {
+    font-size: 12px;
+    font-weight: 400;
     color: #ff8a80;
-    font-size: 0.9em;
-    text-align: left;
-    padding-left: 10px;
 }
 
-.pid-wheelchair,
-.pid-air-conditioned {
-    text-align: center;
-    width: 20px;
+.pid-minutes {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    color: #fff;
 }
 
-.pid-wheelchair .fas,
-.pid-air-conditioned .fas {
-    color: #888;
+.pid-minutes-value {
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.pid-minutes-unit {
+    font-size: 12px;
+    font-weight: 400;
+    color: #7a7a7a;
 }
