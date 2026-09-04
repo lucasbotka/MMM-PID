@@ -1,5 +1,7 @@
 # MMM-PID
 
+[![Lint](https://github.com/lucasbotka/MMM-PID/actions/workflows/lint.yml/badge.svg)](https://github.com/lucasbotka/MMM-PID/actions/workflows/lint.yml)
+
 *MMM-PID* is a module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) that displays real-time departure boards for public transport stops within the [PID](https://pid.cz/) system. Using the free Golemio API, it shows departure times, including any current delays, for Prague and the surrounding region in the Czech Republic.
 
 
