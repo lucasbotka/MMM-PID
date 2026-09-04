@@ -18,7 +18,8 @@ module.exports = NodeHelper.create({
     const params = new URLSearchParams({
       aswIds: config.aswIds,
       filter: "none",
-      limit: 30,
+      // client-side allowed_routes filtering needs the full window - 100 is the API cap, higher values silently return 100
+      limit: 100,
       minutesAfter: config.minutesAfter,
     })
     params.append("skip[]", "atStop")

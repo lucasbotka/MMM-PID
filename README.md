@@ -87,7 +87,7 @@ Option|Description
 ------|-----------
 `aswIds`| Stop ID from the PID stop list. Required - entries without it are skipped
 `customName`| Replace the stop name coming from the API with your own text. Omit it to keep the API name (default)
-`allowed_routes`| Only show these line numbers. Empty array means all lines. Eg. `[ '375', '367' ]`
+`allowed_routes`| Only show these line numbers. Empty array means all lines. Eg. `[ '375', '367' ]`. On large interchanges use an `aswIds` with the platform number (`897/101`, not `897`) - the API caps a response at 100 departures, so a whole-node query can run out before a less frequent line shows up
 `maxDepartures`| Maximum number of departures to display for this stop. Set it to `0` to hide the stop without removing it from the config (default: `5`)
 
 > **Note:** Canceled trips and vehicles currently standing at the stop are not displayed.
