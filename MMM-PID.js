@@ -5,6 +5,10 @@
  * MIT Licensed.
  */
 
+// Floor for updateInterval - a typo like 60 (meant as seconds) would otherwise poll hundreds of times a second
+const MIN_UPDATE_INTERVAL = 30000
+const DEFAULT_MAX_DEPARTURES = 5
+
 Module.register("MMM-PID", {
   defaults: {
     apiKey: "YOUR_GOLEMIO_API_KEY",
@@ -12,7 +16,7 @@ Module.register("MMM-PID", {
       {
         aswIds: "1973_2",
         allowed_routes: [],
-        maxDepartures: 5,
+        maxDepartures: DEFAULT_MAX_DEPARTURES,
       },
     ],
     minutesAfter: 160,
@@ -26,22 +30,69 @@ Module.register("MMM-PID", {
     this.departures = {}
     this.errors = {}
     this.authError = null
+    this.lastFetch = 0
+    this.config.updateInterval = this.sanitizedUpdateInterval()
     if (!this.config.apiKey || this.config.apiKey === "YOUR_GOLEMIO_API_KEY") {
-      this.configError = true
+      this.configError = "NO_API_KEY"
       return
     }
+    const stops = this.sanitizedStops()
+    if (stops.length === 0) {
+      this.configError = "NO_STOPS"
+      return
+    }
+    this.config.stops = stops
     this.getDepartures()
     this.scheduleUpdates()
   },
 
-  scheduleUpdates: function () {
-    this.updateTimer = setInterval(() => {
+  sanitizedUpdateInterval: function () {
+    const interval = Number(this.config.updateInterval)
+    if (!Number.isFinite(interval)) {
+      Log.warn(`${this.name}: updateInterval is not a number, falling back to ${this.defaults.updateInterval} ms`)
+      return this.defaults.updateInterval
+    }
+    if (interval < MIN_UPDATE_INTERVAL) {
+      Log.warn(`${this.name}: updateInterval ${this.config.updateInterval} is below the ${MIN_UPDATE_INTERVAL} ms minimum, clamping`)
+      return MIN_UPDATE_INTERVAL
+    }
+    return interval
+  },
+
+  // Poll-ready copies of the configured stops - getDom() runs often, so normalize once here
+  sanitizedStops: function () {
+    const raw = Array.isArray(this.config.stops) ? this.config.stops : []
+    const stops = raw
+      .filter(s => s && typeof s === "object" && String(s.aswIds ?? "").trim())
+      .map(s => ({ ...s, aswIds: String(s.aswIds).trim(), maxDepartures: this.sanitizedMaxDepartures(s) }))
+    if (stops.length < raw.length) {
+      Log.warn(`${this.name}: dropped ${raw.length - stops.length} stops without a usable aswIds`)
+    }
+    return stops
+  },
+
+  // Guards the slice() in getDom() - 0 hides the stop on purpose, anything below it is a config mistake
+  sanitizedMaxDepartures: function (stop) {
+    if (stop.maxDepartures === undefined || stop.maxDepartures === null) {
+      return DEFAULT_MAX_DEPARTURES
+    }
+    const max = Math.floor(Number(stop.maxDepartures))
+    if (!Number.isFinite(max) || max < 0) {
+      Log.warn(`${this.name}: maxDepartures for ${stop.aswIds} is not a positive number, using ${DEFAULT_MAX_DEPARTURES}`)
+      return DEFAULT_MAX_DEPARTURES
+    }
+    return max
+  },
+
+  scheduleUpdates: function (delay) {
+    this.updateTimer = setTimeout(() => {
       this.getDepartures()
-    }, this.config.updateInterval)
+      this.scheduleUpdates()
+    }, delay ?? this.config.updateInterval)
   },
 
   stopUpdates: function () {
-    clearInterval(this.updateTimer)
+    clearTimeout(this.updateTimer)
     this.updateTimer = null
   },
 
@@ -54,8 +105,14 @@ Module.register("MMM-PID", {
       return
     }
     this.stopUpdates()
-    this.getDepartures()
-    this.scheduleUpdates()
+    // show() fires resume() even on a module that was never hidden - refetch only stale data
+    const age = Date.now() - this.lastFetch
+    if (age >= this.config.updateInterval) {
+      this.getDepartures()
+      this.scheduleUpdates()
+    } else {
+      this.scheduleUpdates(this.config.updateInterval - age)
+    }
   },
 
   getStyles: function () {
@@ -70,6 +127,7 @@ Module.register("MMM-PID", {
   },
 
   getDepartures: function () {
+    this.lastFetch = Date.now()
     this.config.stops.forEach((stop) => {
       this.sendSocketNotification("GET_DEPARTURES", {
         identifier: this.identifier,
@@ -88,8 +146,13 @@ Module.register("MMM-PID", {
     }
 
     if (notification === "DEPARTURES_DATA") {
-      delete this.errors[payload.aswIds]
-      this.departures[payload.aswIds] = payload.data
+      const board = this.sanitizeBoard(payload.data)
+      if (board) {
+        delete this.errors[payload.aswIds]
+        this.departures[payload.aswIds] = board
+      } else {
+        this.errors[payload.aswIds] = this.translate("BAD_RESPONSE")
+      }
       this.updateDom()
     } else if (notification === "FETCH_ERROR") {
       if (payload.status === 401 || payload.status === 403) {
@@ -103,6 +166,22 @@ Module.register("MMM-PID", {
       }
       this.updateDom()
     }
+  },
+
+  // Third-party input: keep only departures carrying every object getDom() dereferences
+  sanitizeBoard: function (data) {
+    const raw = Array.isArray(data?.departures) ? data.departures : null
+    if (!raw) {
+      return null
+    }
+    const departures = raw.filter(d => d && d.route && d.trip && d.delay && d.departure_timestamp)
+    if (raw.length > 0 && departures.length === 0) {
+      return null
+    }
+    if (departures.length < raw.length) {
+      Log.warn(`${this.name}: dropped ${raw.length - departures.length} malformed departures`)
+    }
+    return { stops: Array.isArray(data.stops) ? data.stops.filter(s => s && s.stop_name) : [], departures }
   },
 
   getIconForRouteType: function (routeType) {
@@ -125,7 +204,7 @@ Module.register("MMM-PID", {
     wrapper.className = "pid-departures"
 
     if (this.configError) {
-      wrapper.textContent = this.translate("NO_API_KEY")
+      wrapper.textContent = this.translate(this.configError)
       wrapper.className = "dimmed light small"
       return wrapper
     }
@@ -157,11 +236,13 @@ Module.register("MMM-PID", {
       const stopData = this.departures[stop.aswIds]
       if (stopData && stopData.departures) {
         let filteredDepartures = stopData.departures
-        if (stop.allowed_routes && stop.allowed_routes.length > 0) {
-          filteredDepartures = filteredDepartures.filter(dep => stop.allowed_routes.includes(dep.route.short_name))
+        // Config may hold numbers, a bare string or stray whitespace - compare as normalized text
+        const routes = [].concat(stop.allowed_routes ?? []).map(r => String(r).trim().toUpperCase()).filter(Boolean)
+        if (routes.length > 0) {
+          filteredDepartures = filteredDepartures.filter(dep => routes.includes(String(dep.route.short_name).toUpperCase()))
         }
 
-        filteredDepartures = filteredDepartures.slice(0, stop.maxDepartures ?? 5)
+        filteredDepartures = filteredDepartures.slice(0, stop.maxDepartures)
 
         if (filteredDepartures.length > 0) {
           somethingRendered = true
@@ -170,7 +251,9 @@ Module.register("MMM-PID", {
 
           const stopName = document.createElement("div")
           stopName.className = "pid-stop-name"
-          stopName.textContent = (stopData.stops && stopData.stops.length > 0) ? stopData.stops[0].stop_name : stop.aswIds
+          // GTFS names are heavily abbreviated - customName lets the user override them, blank falls back to the API
+          const customName = typeof stop.customName === "string" ? stop.customName.trim() : ""
+          stopName.textContent = customName || (stopData.stops.length > 0 ? stopData.stops[0].stop_name : stop.aswIds)
           stopWrapper.appendChild(stopName)
 
           const departuresTable = document.createElement("table")

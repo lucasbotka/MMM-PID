@@ -1,5 +1,7 @@
 # MMM-PID
 
+[![Lint](https://github.com/lucasbotka/MMM-PID/actions/workflows/lint.yml/badge.svg)](https://github.com/lucasbotka/MMM-PID/actions/workflows/lint.yml)
+
 *MMM-PID* is a module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) that displays real-time departure boards for public transport stops within the [PID](https://pid.cz/) system. Using the free Golemio API, it shows departure times, including any current delays, for Prague and the surrounding region in the Czech Republic.
 
 
@@ -51,6 +53,7 @@ In order to display departure boards for specific stops, you need to find their 
 					},
 					{
 						aswIds: '1827_2', // Brandýs nad Labem náměstí
+						customName: 'Brandýs náměstí',
 						allowed_routes: [ '367' , '375' ],
 						maxDepartures: 3
 					},
@@ -75,7 +78,7 @@ Option|Description
 `apiKey`| Your Golemio API [key](https://api.golemio.cz/api-keys/auth/sign-in)
 `stops`| Array of stop objects (see below)
 `minutesAfter`| How many minutes ahead departures should be fetched (default: `160`)
-`updateInterval`| How often to refresh departures in milliseconds (default: `60000`)
+`updateInterval`| How often to refresh departures in milliseconds (default: `60000`, minimum: `30000`)
 `showIcons`| Show transport type icons (default: `true`)
 `showWheelchairIcon`| Show wheelchair accessibility icon when available (default: `false`)
 `showAirConditionedIcon`| Show air conditioning icon when available (default: `false`)
@@ -84,9 +87,10 @@ Each object in the `stops` array supports the following options:
 
 Option|Description
 ------|-----------
-`aswIds`| Stop ID from the PID stop list
-`allowed_routes`| Only show these line numbers. Empty array means all lines. Eg. `[ '375', '367' ]`
-`maxDepartures`| Maximum number of departures to display for this stop (default: `5`)
+`aswIds`| Stop ID from the PID stop list. Required - entries without it are skipped
+`customName`| Replace the stop name coming from the API with your own text. Omit it to keep the API name (default)
+`allowed_routes`| Only show these line numbers. Empty array means all lines. Eg. `[ '375', '367' ]`. On large interchanges use an `aswIds` with the platform number (`897/101`, not `897`) - the API caps a response at 100 departures, so a whole-node query can run out before a less frequent line shows up
+`maxDepartures`| Maximum number of departures to display for this stop. Set it to `0` to hide the stop without removing it from the config (default: `5`)
 
 > **Note:** Canceled trips and vehicles currently standing at the stop are not displayed.
 
