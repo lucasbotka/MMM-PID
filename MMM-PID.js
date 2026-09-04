@@ -226,7 +226,9 @@ Module.register("MMM-PID", {
 
           const stopName = document.createElement("div")
           stopName.className = "pid-stop-name"
-          stopName.textContent = (stopData.stops && stopData.stops.length > 0) ? stopData.stops[0].stop_name : stop.aswIds
+          // GTFS names are heavily abbreviated - customName lets the user override them, blank falls back to the API
+          const customName = typeof stop.customName === "string" ? stop.customName.trim() : ""
+          stopName.textContent = customName || (stopData.stops.length > 0 ? stopData.stops[0].stop_name : stop.aswIds)
           stopWrapper.appendChild(stopName)
 
           const departuresTable = document.createElement("table")

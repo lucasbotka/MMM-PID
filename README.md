@@ -51,6 +51,7 @@ In order to display departure boards for specific stops, you need to find their 
 					},
 					{
 						aswIds: '1827_2', // Brandýs nad Labem náměstí
+						customName: 'Brandýs náměstí',
 						allowed_routes: [ '367' , '375' ],
 						maxDepartures: 3
 					},
@@ -85,6 +86,7 @@ Each object in the `stops` array supports the following options:
 Option|Description
 ------|-----------
 `aswIds`| Stop ID from the PID stop list
+`customName`| Replace the stop name coming from the API with your own text. Omit it to keep the API name (default)
 `allowed_routes`| Only show these line numbers. Empty array means all lines. Eg. `[ '375', '367' ]`
 `maxDepartures`| Maximum number of departures to display for this stop (default: `5`)
 
