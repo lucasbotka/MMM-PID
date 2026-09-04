@@ -156,7 +156,7 @@ Module.register("MMM-PID", {
     if (departures.length < raw.length) {
       Log.warn(`${this.name}: dropped ${raw.length - departures.length} malformed departures`)
     }
-    return { stops: Array.isArray(data.stops) ? data.stops : [], departures }
+    return { stops: Array.isArray(data.stops) ? data.stops.filter(s => s && s.stop_name) : [], departures }
   },
 
   getIconForRouteType: function (routeType) {
