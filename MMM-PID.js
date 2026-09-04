@@ -7,6 +7,7 @@
 
 // Floor for updateInterval - a typo like 60 (meant as seconds) would otherwise poll hundreds of times a second
 const MIN_UPDATE_INTERVAL = 30000
+const DEFAULT_MAX_DEPARTURES = 5
 
 Module.register("MMM-PID", {
   defaults: {
@@ -35,8 +36,7 @@ Module.register("MMM-PID", {
       this.configError = "NO_API_KEY"
       return
     }
-    // stops must be a list of objects - anything else cannot be polled and would throw below
-    const stops = Array.isArray(this.config.stops) ? this.config.stops.filter(s => s && typeof s === "object") : []
+    const stops = this.sanitizedStops()
     if (stops.length === 0) {
       this.configError = "NO_STOPS"
       return
@@ -57,6 +57,31 @@ Module.register("MMM-PID", {
       return MIN_UPDATE_INTERVAL
     }
     return interval
+  },
+
+  // Poll-ready copies of the configured stops - getDom() runs often, so normalize once here
+  sanitizedStops: function () {
+    const raw = Array.isArray(this.config.stops) ? this.config.stops : []
+    const stops = raw
+      .filter(s => s && typeof s === "object" && String(s.aswIds ?? "").trim())
+      .map(s => ({ ...s, aswIds: String(s.aswIds).trim(), maxDepartures: this.sanitizedMaxDepartures(s) }))
+    if (stops.length < raw.length) {
+      Log.warn(`${this.name}: dropped ${raw.length - stops.length} stops without a usable aswIds`)
+    }
+    return stops
+  },
+
+  // Guards the slice() in getDom() - 0 hides the stop on purpose, anything below it is a config mistake
+  sanitizedMaxDepartures: function (stop) {
+    if (stop.maxDepartures === undefined || stop.maxDepartures === null) {
+      return DEFAULT_MAX_DEPARTURES
+    }
+    const max = Math.floor(Number(stop.maxDepartures))
+    if (!Number.isFinite(max) || max < 0) {
+      Log.warn(`${this.name}: maxDepartures for ${stop.aswIds} is not a positive number, using ${DEFAULT_MAX_DEPARTURES}`)
+      return DEFAULT_MAX_DEPARTURES
+    }
+    return max
   },
 
   scheduleUpdates: function (delay) {
@@ -217,7 +242,7 @@ Module.register("MMM-PID", {
           filteredDepartures = filteredDepartures.filter(dep => routes.includes(String(dep.route.short_name).toUpperCase()))
         }
 
-        filteredDepartures = filteredDepartures.slice(0, stop.maxDepartures ?? 5)
+        filteredDepartures = filteredDepartures.slice(0, stop.maxDepartures)
 
         if (filteredDepartures.length > 0) {
           somethingRendered = true
