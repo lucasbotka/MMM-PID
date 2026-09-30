@@ -7,7 +7,7 @@ import stylistic from "@stylistic/eslint-plugin"
 
 export default defineConfig([
   {
-    ignores: ["README.md"],
+    ignores: ["README.md", "dev/**"],
   },
   { files: ["**/*.css"], plugins: { css }, language: "css/css", extends: ["css/recommended"] },
   {

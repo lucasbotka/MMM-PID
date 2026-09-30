@@ -194,6 +194,13 @@ Module.register("MMM-PID", {
         return "fas fa-train" // Train
       case 3:
         return "fas fa-bus-simple" // Bus
+      case 4:
+        return "fas fa-ferry" // Ferry
+      case 7:
+        return "fas fa-cable-car" // Funicular
+      case 11:
+        // Font Awesome has no trolleybus glyph - the detailed bus stands in for the plain one used by buses
+        return "fas fa-bus" // Trolleybus
       default:
         return "fas fa-bus" // Unknown
     }
