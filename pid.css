@@ -1,24 +1,27 @@
+/* Sized in em against the destination text (15px in the design), which follows MagicMirror's small font */
 .pid-departures {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    max-width: 360px;
+    gap: calc(12em / 15);
+    width: calc(360em / 15);
+    font-size: var(--font-size-small, 1rem);
+    line-height: 1.5;
     text-align: left;
 }
 
 .pid-stop {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: calc(3em / 15);
     margin: 0;
 }
 
+/* Spacing below is relative to the label's own 12px font */
 .pid-stop-name {
     display: flex;
     align-items: center;
-    gap: 7px;
-    font-size: 12px;
+    gap: calc(7em / 12);
+    font-size: calc(12em / 15);
     font-weight: 400;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -26,22 +29,22 @@
 }
 
 .pid-stop-name .fas {
-    font-size: 11px;
+    font-size: calc(11em / 12);
     color: #6e6e6e;
 }
 
 /* line · destination · time · countdown */
 .pid-departure {
     display: grid;
-    grid-template-columns: 32px 1fr auto auto;
+    grid-template-columns: calc(32em / 15) 1fr auto auto;
     align-items: center;
-    gap: 8px;
-    padding: 5px 0;
+    gap: calc(8em / 15);
+    padding: calc(5em / 15) 0;
     border-top: 1px solid #1c1c1c;
 }
 
 .pid-line-name {
-    font-size: 18px;
+    font-size: calc(18em / 15);
     font-weight: 700;
     line-height: 1;
     color: #fff;
@@ -51,9 +54,9 @@
 .pid-destination-cell {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: calc(5em / 15);
     min-width: 0;
-    font-size: 15px;
+    font-size: 1em;
     line-height: 1;
     color: #c4c4c4;
 }
@@ -67,7 +70,7 @@
 /* FA6 solid only ships weight 900 - never override font-weight here */
 .pid-destination-cell .fas {
     flex: none;
-    font-size: 10px;
+    font-size: calc(10em / 15);
     color: #4a4a4a;
 }
 
@@ -75,19 +78,19 @@
 .pid-delay {
     margin-left: auto;
     flex: none;
-    font-size: 12px;
+    font-size: calc(12em / 15);
     font-weight: 700;
     line-height: 1;
     color: #ff8a80;
     background: #2a1513;
-    padding: 3px 5px;
-    border-radius: 2px;
+    padding: calc(3em / 12) calc(5em / 12);
+    border-radius: calc(2em / 12);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
 
 .pid-time {
-    font-size: 15px;
+    font-size: 1em;
     font-weight: 700;
     line-height: 1;
     color: #fff;
@@ -98,20 +101,20 @@
     display: flex;
     align-items: baseline;
     justify-content: flex-end;
-    gap: 2px;
-    min-width: 44px;
+    gap: calc(2em / 15);
+    min-width: calc(44em / 15);
     color: #fff;
 }
 
 .pid-minutes-value {
-    font-size: 18px;
+    font-size: calc(18em / 15);
     font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
 }
 
 .pid-minutes-unit {
-    font-size: 11px;
+    font-size: calc(11em / 15);
     font-weight: 400;
     color: #7a7a7a;
 }
