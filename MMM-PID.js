@@ -8,6 +8,8 @@
 // Floor for updateInterval - a typo like 60 (meant as seconds) would otherwise poll hundreds of times a second
 const MIN_UPDATE_INTERVAL = 30000
 const DEFAULT_MAX_DEPARTURES = 5
+// Pinned to Prague - a mirror running in UTC (e.g. Docker) would otherwise shift every departure time
+const TIME_FORMAT = new Intl.DateTimeFormat("cs-CZ", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Prague" })
 
 Module.register("MMM-PID", {
   defaults: {
@@ -253,91 +255,7 @@ Module.register("MMM-PID", {
 
         if (filteredDepartures.length > 0) {
           somethingRendered = true
-          const stopWrapper = document.createElement("div")
-          stopWrapper.className = "pid-stop"
-
-          const stopName = document.createElement("div")
-          stopName.className = "pid-stop-name"
-          // GTFS names are heavily abbreviated - customName lets the user override them, blank falls back to the API
-          const customName = typeof stop.customName === "string" ? stop.customName.trim() : ""
-          stopName.textContent = customName || (stopData.stops.length > 0 ? stopData.stops[0].stop_name : stop.aswIds)
-          stopWrapper.appendChild(stopName)
-
-          const departuresTable = document.createElement("table")
-          departuresTable.className = "pid-departures-table"
-
-          filteredDepartures.forEach((departure) => {
-            const row = document.createElement("tr")
-
-            // Icon
-            if (this.config.showIcons) {
-              const iconCell = document.createElement("td")
-              iconCell.className = "pid-icon"
-              const icon = document.createElement("i")
-              icon.className = this.getIconForRouteType(departure.route.type)
-              iconCell.appendChild(icon)
-              row.appendChild(iconCell)
-            }
-
-            // Line Name
-            const lineCell = document.createElement("td")
-            lineCell.className = "pid-line-name"
-            lineCell.textContent = departure.route.short_name
-            row.appendChild(lineCell)
-
-            // Wheelchair
-            if (this.config.showWheelchairIcon) {
-              const wheelchairCell = document.createElement("td")
-              wheelchairCell.className = "pid-wheelchair"
-              if (departure.trip.is_wheelchair_accessible) {
-                const icon = document.createElement("i")
-                icon.className = "fas fa-wheelchair"
-                wheelchairCell.appendChild(icon)
-              }
-              row.appendChild(wheelchairCell)
-            }
-
-            // Air conditioning
-            if (this.config.showAirConditionedIcon) {
-              const acCell = document.createElement("td")
-              acCell.className = "pid-air-conditioned"
-              if (departure.trip.is_air_conditioned) {
-                const icon = document.createElement("i")
-                icon.className = "fas fa-snowflake"
-                acCell.appendChild(icon)
-              }
-              row.appendChild(acCell)
-            }
-
-            // Minutes until departure
-            const minutesCell = document.createElement("td")
-            minutesCell.className = "pid-minutes"
-            const departsSpan = document.createElement("span")
-            departsSpan.className = "departs-in-text"
-            departsSpan.textContent = `${this.translate("DEPARTS_IN")} `
-            minutesCell.appendChild(departsSpan)
-            minutesCell.appendChild(document.createTextNode(`${departure.departure_timestamp.minutes} ${this.translate("MINUTES")}`))
-            row.appendChild(minutesCell)
-
-            // Departure Time
-            const timeCell = document.createElement("td")
-            timeCell.className = "pid-departure-time"
-            const departureTime = new Date(departure.departure_timestamp.scheduled).toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" })
-            timeCell.textContent = departureTime
-            row.appendChild(timeCell)
-
-            // Delay
-            const delayCell = document.createElement("td")
-            delayCell.className = "pid-delay"
-            if (departure.delay.is_available && departure.delay.minutes > 0) {
-              delayCell.textContent = `+${departure.delay.minutes}`
-            }
-            row.appendChild(delayCell)
-
-            departuresTable.appendChild(row)
-          })
-          stopWrapper.appendChild(departuresTable)
-          wrapper.appendChild(stopWrapper)
+          wrapper.appendChild(this.renderStop(stop, stopData, filteredDepartures))
         }
       }
     })
@@ -348,5 +266,90 @@ Module.register("MMM-PID", {
     }
 
     return wrapper
+  },
+
+  renderStop: function (stop, stopData, departures) {
+    const stopWrapper = document.createElement("div")
+    stopWrapper.className = "pid-stop"
+
+    const stopName = document.createElement("div")
+    stopName.className = "pid-stop-name"
+    // One mode icon per stop - on a single platform every departure shares it
+    if (this.config.showIcons) {
+      const icon = document.createElement("i")
+      icon.className = this.getIconForRouteType(departures[0].route.type)
+      stopName.appendChild(icon)
+    }
+    // GTFS names are heavily abbreviated - customName lets the user override them, blank falls back to the API
+    const customName = typeof stop.customName === "string" ? stop.customName.trim() : ""
+    stopName.appendChild(document.createTextNode(customName || (stopData.stops.length > 0 ? stopData.stops[0].stop_name : stop.aswIds)))
+    stopWrapper.appendChild(stopName)
+
+    departures.forEach((departure) => {
+      stopWrapper.appendChild(this.renderDeparture(departure))
+    })
+    return stopWrapper
+  },
+
+  renderDeparture: function (departure) {
+    const row = document.createElement("div")
+    row.className = "pid-departure"
+
+    const lineCell = document.createElement("div")
+    lineCell.className = "pid-line-name"
+    lineCell.textContent = departure.route.short_name
+    row.appendChild(lineCell)
+
+    const destinationCell = document.createElement("div")
+    destinationCell.className = "pid-destination-cell"
+    const destination = document.createElement("span")
+    destination.className = "pid-destination"
+    destination.textContent = departure.trip.headsign ?? ""
+    destinationCell.appendChild(destination)
+
+    if (this.config.showWheelchairIcon && departure.trip.is_wheelchair_accessible) {
+      destinationCell.appendChild(this.createIcon("fas fa-wheelchair"))
+    }
+    if (this.config.showAirConditionedIcon && departure.trip.is_air_conditioned) {
+      destinationCell.appendChild(this.createIcon("fas fa-snowflake"))
+    }
+
+    const delayMinutes = departure.delay.is_available ? Math.round(departure.delay.minutes) : 0
+    if (delayMinutes > 0) {
+      const delayBadge = document.createElement("span")
+      delayBadge.className = "pid-delay"
+      delayBadge.textContent = this.translate("DELAY", { minutes: delayMinutes })
+      destinationCell.appendChild(delayBadge)
+    }
+    row.appendChild(destinationCell)
+
+    // Time and countdown share one timestamp, otherwise a delayed row would contradict itself
+    const timestamp = departure.departure_timestamp
+    const departsAt = new Date(timestamp.predicted || timestamp.scheduled)
+
+    const timeCell = document.createElement("div")
+    timeCell.className = "pid-time"
+    timeCell.textContent = Number.isNaN(departsAt.getTime()) ? "" : TIME_FORMAT.format(departsAt)
+    row.appendChild(timeCell)
+
+    const minutesCell = document.createElement("div")
+    minutesCell.className = "pid-minutes"
+    const minutesValue = document.createElement("span")
+    minutesValue.className = "pid-minutes-value"
+    minutesValue.textContent = Number.isNaN(departsAt.getTime()) ? timestamp.minutes : Math.max(0, Math.round((departsAt.getTime() - Date.now()) / 60000))
+    minutesCell.appendChild(minutesValue)
+    const minutesUnit = document.createElement("span")
+    minutesUnit.className = "pid-minutes-unit"
+    minutesUnit.textContent = this.translate("MINUTES")
+    minutesCell.appendChild(minutesUnit)
+    row.appendChild(minutesCell)
+
+    return row
+  },
+
+  createIcon: function (className) {
+    const icon = document.createElement("i")
+    icon.className = className
+    return icon
   },
 })
