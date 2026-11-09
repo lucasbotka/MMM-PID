@@ -313,14 +313,6 @@ Module.register("MMM-PID", {
     if (this.config.showAirConditionedIcon && departure.trip.is_air_conditioned) {
       destinationCell.appendChild(this.createIcon("fas fa-snowflake"))
     }
-
-    const delayMinutes = departure.delay.is_available ? Math.round(departure.delay.minutes) : 0
-    if (delayMinutes > 0) {
-      const delayBadge = document.createElement("span")
-      delayBadge.className = "pid-delay"
-      delayBadge.textContent = this.translate("DELAY", { minutes: delayMinutes })
-      destinationCell.appendChild(delayBadge)
-    }
     row.appendChild(destinationCell)
 
     // Time and countdown share one timestamp, otherwise a delayed row would contradict itself
@@ -343,6 +335,15 @@ Module.register("MMM-PID", {
     minutesUnit.textContent = this.translate("MINUTES")
     minutesCell.appendChild(minutesUnit)
     row.appendChild(minutesCell)
+
+    // Empty slot on rows without delay keeps the columns aligned
+    const delayCell = document.createElement("div")
+    delayCell.className = "pid-delay"
+    const delayMinutes = departure.delay.is_available ? Math.round(departure.delay.minutes) : 0
+    if (delayMinutes > 0) {
+      delayCell.textContent = this.translate("DELAY", { minutes: delayMinutes })
+    }
+    row.appendChild(delayCell)
 
     return row
   },

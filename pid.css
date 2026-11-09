@@ -44,10 +44,10 @@
     color: #6e6e6e;
 }
 
-/* line · destination · time · countdown */
+/* line · destination · time · countdown · delay */
 .pid-departure {
     display: grid;
-    grid-template-columns: calc(32em / 15) 1fr auto auto;
+    grid-template-columns: calc(32em / 15) 1fr auto auto calc(20em / 15);
     align-items: center;
     gap: calc(8em / 15);
     padding: calc(5em / 15) 0;
@@ -85,17 +85,13 @@
     color: #4a4a4a;
 }
 
-/* Pushed to the right edge of the destination cell so the time column never moves */
+/* Own fixed slot after the countdown so delays never shift the time columns; spacing relative to its 13px font */
 .pid-delay {
-    margin-left: auto;
-    flex: none;
-    font-size: calc(12em / 15);
+    margin-left: calc(-2em / 13);
+    font-size: calc(13em / 15);
     font-weight: 700;
     line-height: 1;
     color: #ff8a80;
-    background: #2a1513;
-    padding: calc(3em / 12) calc(5em / 12);
-    border-radius: calc(2em / 12);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
@@ -113,7 +109,7 @@
     align-items: baseline;
     justify-content: flex-end;
     gap: calc(2em / 15);
-    min-width: calc(44em / 15);
+    min-width: calc(36em / 15);
     color: #fff;
 }
 

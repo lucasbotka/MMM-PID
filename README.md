@@ -106,10 +106,11 @@ Add these to `config/custom.css` in your MagicMirror folder.
 }
 ```
 
-**Module above MMM-PID looks indented.** In a right region, MagicMirror makes all modules as wide as the widest one. Modules whose content doesn't follow the region's alignment (for example the weather forecast table) then stick to the left edge. Align them to the right:
+**Module above MMM-PID looks indented.** In a right region, MagicMirror makes all modules as wide as the widest one. Modules whose content doesn't follow the region's alignment (for example the weather forecast) then stick to the left edge. Align them to the right:
 
 ```css
-.region.right .weather table {
+.region.right .weather .weather-forecast,
+.region.right .weather .weather-hourly {
   margin-left: auto;
 }
 ```
