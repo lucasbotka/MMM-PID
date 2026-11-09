@@ -94,6 +94,25 @@ Option|Description
 
 > **Note:** Canceled trips and vehicles currently standing at the stop are not displayed.
 
+## Styling
+
+Add these to `config/custom.css` in your MagicMirror folder.
+
+**Board size.** Everything on the board is sized relative to one font size, so a single line scales text, icons, spacing and width together:
+
+```css
+.pid-departures {
+  font-size: 0.75rem;
+}
+```
+
+**Module above MMM-PID looks indented.** In a right region, MagicMirror makes all modules as wide as the widest one. Modules whose content doesn't follow the region's alignment (for example the weather forecast table) then stick to the left edge. Align them to the right:
+
+```css
+.region.right .weather table {
+  margin-left: auto;
+}
+```
 
 
 

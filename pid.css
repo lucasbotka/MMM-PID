@@ -1,12 +1,23 @@
-/* Sized in em against the destination text (15px in the design), which follows MagicMirror's small font */
+/* Sized in em against the destination text (15px in the design), scaled down from MagicMirror's small font */
 .pid-departures {
     display: flex;
     flex-direction: column;
     gap: calc(12em / 15);
-    width: calc(360em / 15);
-    font-size: var(--font-size-small, 1rem);
+    /* Only as wide as needed so the board doesn't stretch the whole region */
+    width: fit-content;
+    max-width: calc(360em / 15);
+    font-size: calc(var(--font-size-small, 1rem) * 0.85);
     line-height: 1.5;
     text-align: left;
+}
+
+/* Follow the region's alignment when another module is wider */
+.region.right .pid-departures {
+    margin-left: auto;
+}
+
+.region.center .pid-departures {
+    margin-inline: auto;
 }
 
 .pid-stop {
