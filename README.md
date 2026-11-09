@@ -79,9 +79,9 @@ Option|Description
 `stops`| Array of stop objects (see below)
 `minutesAfter`| How many minutes ahead departures should be fetched (default: `160`)
 `updateInterval`| How often to refresh departures in milliseconds (default: `60000`, minimum: `30000`)
-`showIcons`| Show transport type icons (default: `true`)
-`showWheelchairIcon`| Show wheelchair accessibility icon when available (default: `false`)
-`showAirConditionedIcon`| Show air conditioning icon when available (default: `false`)
+`showIcons`| Show a transport type icon next to each stop name (default: `true`)
+`showWheelchairIcon`| Show a wheelchair icon after the destination of accessible trips (default: `false`)
+`showAirConditionedIcon`| Show a snowflake icon after the destination of air-conditioned trips (default: `false`)
 
 Each object in the `stops` array supports the following options:
 
@@ -94,6 +94,26 @@ Option|Description
 
 > **Note:** Canceled trips and vehicles currently standing at the stop are not displayed.
 
+## Styling
+
+Add these to `config/custom.css` in your MagicMirror folder.
+
+**Board size.** Everything on the board is sized relative to one font size, so a single line scales text, icons, spacing and width together:
+
+```css
+.pid-departures {
+  font-size: 0.75rem;
+}
+```
+
+**Module above MMM-PID looks indented.** In a right region, MagicMirror makes all modules as wide as the widest one. Modules whose content doesn't follow the region's alignment (for example the weather forecast) then stick to the left edge. Align them to the right:
+
+```css
+.region.right .weather .weather-forecast,
+.region.right .weather .weather-hourly {
+  margin-left: auto;
+}
+```
 
 
 
