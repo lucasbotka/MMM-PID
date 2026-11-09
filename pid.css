@@ -110,6 +110,8 @@
     justify-content: flex-end;
     gap: calc(2em / 15);
     min-width: calc(36em / 15);
+    /* Extra room on top of the grid gap so time and countdown don't read as one number */
+    margin-left: calc(6em / 15);
     color: #fff;
 }
 
