@@ -31,8 +31,8 @@
     "@eslint/css": "^2.0.1",
     "@eslint/js": "^10.0.1",
     "@eslint/markdown": "^8.0.3",
-    "@stylistic/eslint-plugin": "^5.10.0",
-    "eslint": "^10.14.0",
+    "@stylistic/eslint-plugin": "^6.0.0",
+    "eslint": "^10.15.0",
     "globals": "^17.14.0"
   }
 }
