@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The departure time no longer shifts out of its column for departures 100 or more minutes away, and a delay of 100+ minutes no longer overflows past the edge of the board.
+
 ## [1.0.0] - 2026-11-09
 
 ### Changed
