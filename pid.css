@@ -47,7 +47,7 @@
 /* line · destination · time · countdown · delay */
 .pid-departure {
     display: grid;
-    grid-template-columns: calc(32em / 15) 1fr auto auto calc(20em / 15);
+    grid-template-columns: calc(32em / 15) 1fr auto auto calc(24em / 15);
     align-items: center;
     gap: calc(8em / 15);
     padding: calc(5em / 15) 0;
@@ -109,7 +109,8 @@
     align-items: baseline;
     justify-content: flex-end;
     gap: calc(2em / 15);
-    min-width: calc(36em / 15);
+    /* Fits a 3-digit countdown so rows over 100 min don't push the time column */
+    min-width: calc(46em / 15);
     /* Extra room on top of the grid gap so time and countdown don't read as one number */
     margin-left: calc(6em / 15);
     color: #fff;

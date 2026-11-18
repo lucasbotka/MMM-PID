@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-18
+
+### Fixed
+
+- The departure time no longer shifts out of its column for departures 100 or more minutes away, and a delay of 100+ minutes no longer overflows past the edge of the board.
+
 ## [1.0.0] - 2026-11-09
 
 ### Changed
@@ -16,5 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CSS classes changed (`.pid-departures-table`, `.departs-in-text` and `.pid-departure-time` were removed). If you restyled the module in `custom.css`, update your selectors. The configuration is unchanged.
 
-[Unreleased]: https://github.com/lucasbotka/MMM-PID/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/lucasbotka/MMM-PID/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/lucasbotka/MMM-PID/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/lucasbotka/MMM-PID/releases/tag/v1.0.0
